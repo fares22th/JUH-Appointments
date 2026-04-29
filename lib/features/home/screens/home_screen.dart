@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
+import 'package:intl/intl.dart' hide TextDirection;
 import '../../../core/colors.dart';
-import '../../../core/extensions.dart';
 import '../../../core/sizes.dart';
 import '../../../data/seed_data.dart';
 import '../../../models/appointment.dart';
@@ -11,7 +10,6 @@ import '../../../providers/appointments_provider.dart';
 import '../../../providers/locale_provider.dart';
 import '../../../providers/profile_provider.dart';
 import '../../../shared/widgets/lang_toggle.dart';
-import '../../../shared/widgets/status_chip.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -22,9 +20,11 @@ class HomeScreen extends ConsumerWidget {
     final profile = ref.watch(profileProvider);
     final upcoming = ref.read(appointmentsProvider.notifier).upcoming;
     final nextAppt = upcoming.isNotEmpty ? upcoming.first : null;
+    final firstName = (isAr ? profile.nameAr : profile.nameEn).split(' ').first;
+    final avatarLetter = (isAr ? profile.nameAr : profile.nameEn)[0];
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F7FA),
+      backgroundColor: JuhColors.bg,
       body: SafeArea(
         child: CustomScrollView(
           slivers: [
@@ -32,21 +32,28 @@ class HomeScreen extends ConsumerWidget {
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.symmetric(
-                    horizontal: 16, vertical: 12),
-                child: Directionality(
-                  textDirection:
-                      isAr ? TextDirection.rtl : TextDirection.ltr,
-                  child: Row(
-                    children: [
-                    // Notification bell
-                    IconButton(
-                      onPressed: () {},
-                      icon: const Icon(Icons.notifications_outlined,
-                          color: Color(0xFF444444)),
-                      padding: EdgeInsets.zero,
-                      constraints: const BoxConstraints(),
+                    horizontal: JuhSizes.md, vertical: 14),
+                child: Row(
+                  textDirection: isAr ? TextDirection.rtl : TextDirection.ltr,
+                  children: [
+                    // Bell button
+                    GestureDetector(
+                      onTap: () {},
+                      child: Container(
+                        width: 42,
+                        height: 42,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius:
+                              BorderRadius.circular(JuhSizes.radiusMd),
+                          border: Border.all(color: JuhColors.border),
+                        ),
+                        child: const Icon(Icons.notifications_outlined,
+                            color: JuhColors.textSecondary,
+                            size: JuhSizes.iconMd),
+                      ),
                     ),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: JuhSizes.sm),
                     const LangToggle(),
                     const Spacer(),
                     // Greeting + name
@@ -58,36 +65,38 @@ class HomeScreen extends ConsumerWidget {
                         Text(
                           isAr ? 'مرحباً،' : 'Hello,',
                           style: const TextStyle(
-                              fontSize: 11, color: Color(0xFF888888)),
+                              fontSize: JuhSizes.fontXs,
+                              color: JuhColors.textSecondary),
                         ),
                         Text(
-                          isAr ? profile.nameAr : profile.nameEn,
+                          firstName,
                           style: const TextStyle(
-                            fontSize: 15,
+                            fontSize: JuhSizes.fontBase,
                             fontWeight: FontWeight.w700,
-                            color: Color(0xFF1A1A2E),
+                            color: JuhColors.textPrimary,
                           ),
                         ),
                       ],
                     ),
                     const SizedBox(width: 10),
-                    // Avatar
+                    // Avatar (circular)
                     GestureDetector(
                       onTap: () => context.push('/profile'),
                       child: Container(
-                        width: 36,
-                        height: 36,
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF2DA8C8),
-                          borderRadius: BorderRadius.circular(10),
+                        width: 42,
+                        height: 42,
+                        decoration: const BoxDecoration(
+                          color: JuhColors.primary,
+                          shape: BoxShape.circle,
                         ),
                         child: Center(
                           child: Text(
-                            'i',
+                            avatarLetter,
                             style: const TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w700,
-                                fontSize: 16),
+                              color: Colors.white,
+                              fontWeight: FontWeight.w700,
+                              fontSize: JuhSizes.fontMd,
+                            ),
                           ),
                         ),
                       ),
@@ -100,42 +109,69 @@ class HomeScreen extends ConsumerWidget {
             // ── Next appointment card ──
             SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
+                padding: const EdgeInsets.fromLTRB(
+                    JuhSizes.md, 4, JuhSizes.md, JuhSizes.md),
                 child: nextAppt != null
                     ? _NextApptCard(appt: nextAppt, isAr: isAr)
                     : _EmptyNextCard(isAr: isAr),
               ),
             ),
 
+            // ── Quick actions header ──
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(
+                    JuhSizes.md, 0, JuhSizes.md, JuhSizes.sm),
+                child: Align(
+                  alignment:
+                      isAr ? Alignment.centerRight : Alignment.centerLeft,
+                  child: Text(
+                    isAr ? 'إجراءات سريعة' : 'Quick Actions',
+                    style: const TextStyle(
+                      fontSize: JuhSizes.fontSm,
+                      fontWeight: FontWeight.w600,
+                      color: JuhColors.textSecondary,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+
             // ── Quick actions grid ──
             SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
+                padding: const EdgeInsets.symmetric(horizontal: JuhSizes.md),
                 child: GridView.count(
                   crossAxisCount: 2,
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
                   crossAxisSpacing: 12,
                   mainAxisSpacing: 12,
-                  childAspectRatio: 1.5,
+                  childAspectRatio: 1.4,
                   children: [
                     _ActionCard(
-                      icon: Icons.add,
-                      iconColor: const Color(0xFF2DA8C8),
+                      isAr: isAr,
+                      icon: Icons.add_circle_outline,
+                      iconColor: JuhColors.primary,
+                      iconBg: JuhColors.primarySoft,
                       title: isAr ? 'حجز موعد جديد' : 'New Appointment',
                       subtitle: isAr ? 'لي' : 'For me',
-                      onTap: () => context.push('/booking?who=self'),
+                      onTap: () => context.push('/relatives?who=self'),
                     ),
                     _ActionCard(
+                      isAr: isAr,
                       icon: Icons.people_outline,
-                      iconColor: const Color(0xFF2DA8C8),
+                      iconColor: const Color(0xFF7B1FA2),
+                      iconBg: const Color(0xFFF3E5F5),
                       title: isAr ? 'حجز لقريب' : 'Book for Relative',
                       subtitle: isAr ? 'الأهل والأبناء' : 'Family members',
                       onTap: () => context.push('/relatives'),
                     ),
                     _ActionCard(
+                      isAr: isAr,
                       icon: Icons.calendar_month_outlined,
-                      iconColor: const Color(0xFF2DA8C8),
+                      iconColor: const Color(0xFF00796B),
+                      iconBg: const Color(0xFFE0F2F1),
                       title: isAr ? 'مواعيدي' : 'My Appointments',
                       subtitle: isAr
                           ? '${upcoming.length} موعد قادم'
@@ -143,11 +179,12 @@ class HomeScreen extends ConsumerWidget {
                       onTap: () => context.push('/appointments'),
                     ),
                     _ActionCard(
-                      icon: Icons.settings_outlined,
-                      iconColor: const Color(0xFF2DA8C8),
+                      isAr: isAr,
+                      icon: Icons.person_outline,
+                      iconColor: const Color(0xFFE65100),
+                      iconBg: const Color(0xFFFFF3E0),
                       title: isAr ? 'بياناتي' : 'My Data',
-                      subtitle:
-                          isAr ? 'تعديل التواصل' : 'Edit contact info',
+                      subtitle: isAr ? 'تعديل التواصل' : 'Edit contact info',
                       onTap: () => context.push('/profile'),
                     ),
                   ],
@@ -155,20 +192,20 @@ class HomeScreen extends ConsumerWidget {
               ),
             ),
 
-            // ── Specialties section ──
+            // ── Popular specialties ──
             SliverToBoxAdapter(
               child: Padding(
-                padding:
-                    const EdgeInsets.fromLTRB(16, 20, 16, 8),
+                padding: const EdgeInsets.fromLTRB(
+                    JuhSizes.md, JuhSizes.lg, JuhSizes.md, JuhSizes.sm),
                 child: Align(
                   alignment:
                       isAr ? Alignment.centerRight : Alignment.centerLeft,
                   child: Text(
-                    isAr ? 'أقسام طائفة' : 'Specialties',
+                    isAr ? 'أقسام شائعة' : 'Popular Specialties',
                     style: const TextStyle(
-                      fontSize: 13,
+                      fontSize: JuhSizes.fontSm,
                       fontWeight: FontWeight.w600,
-                      color: Color(0xFF888888),
+                      color: JuhColors.textSecondary,
                     ),
                   ),
                 ),
@@ -176,40 +213,47 @@ class HomeScreen extends ConsumerWidget {
             ),
             SliverToBoxAdapter(
               child: SizedBox(
-                height: 48,
+                height: 52,
                 child: ListView.separated(
                   scrollDirection: Axis.horizontal,
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  separatorBuilder: (_, __) => const SizedBox(width: 8),
+                  padding: const EdgeInsets.symmetric(horizontal: JuhSizes.md),
+                  separatorBuilder: (_, __) =>
+                      const SizedBox(width: JuhSizes.sm),
                   itemCount: SeedData.specialties.length,
                   itemBuilder: (ctx, i) {
                     final s = SeedData.specialties[i];
                     return GestureDetector(
-                      onTap: () =>
-                          context.push('/booking?who=self'),
+                      onTap: () => context.push('/relatives?who=self'),
                       child: Container(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 14, vertical: 10),
+                            horizontal: 16, vertical: 0),
                         decoration: BoxDecoration(
                           color: Colors.white,
-                          borderRadius: BorderRadius.circular(24),
-                          border: Border.all(
-                              color: const Color(0xFFE0E0E0)),
+                          borderRadius:
+                              BorderRadius.circular(JuhSizes.radiusFull),
+                          border: Border.all(color: JuhColors.border),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.04),
+                              blurRadius: 6,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Text(s.icon,
-                                style: const TextStyle(fontSize: 14)),
+                            Text(s.icon, style: const TextStyle(fontSize: 16)),
                             const SizedBox(width: 6),
                             Text(
                               isAr
-                                  ? s.nameAr.split(' ')[0]
-                                  : s.nameEn.split(' ')[0],
+                                  ? s.nameAr.split(' ').first
+                                  : s.nameEn.split(' ').first,
                               style: const TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w500,
-                                  color: Color(0xFF333333)),
+                                fontSize: JuhSizes.fontXs,
+                                fontWeight: FontWeight.w600,
+                                color: JuhColors.textPrimary,
+                              ),
                             ),
                           ],
                         ),
@@ -220,12 +264,10 @@ class HomeScreen extends ConsumerWidget {
               ),
             ),
 
-            const SliverToBoxAdapter(child: SizedBox(height: 24)),
+            const SliverToBoxAdapter(child: SizedBox(height: JuhSizes.lg)),
           ],
         ),
       ),
-
-      // ── Bottom nav ──
       bottomNavigationBar: _BottomNav(isAr: isAr),
     );
   }
@@ -235,109 +277,160 @@ class HomeScreen extends ConsumerWidget {
 class _NextApptCard extends StatelessWidget {
   final Appointment appt;
   final bool isAr;
-
   const _NextApptCard({required this.appt, required this.isAr});
 
   @override
   Widget build(BuildContext context) {
-    final dateFmt = DateFormat(
-        isAr ? 'd MMMM' : 'MMM d', isAr ? 'ar' : 'en');
+    final dateFmt = DateFormat(isAr ? 'd MMMM' : 'MMM d', isAr ? 'ar' : 'en');
     final timeFmt = DateFormat('HH:mm');
 
     return Container(
-      padding: const EdgeInsets.all(18),
+      padding: const EdgeInsets.all(JuhSizes.md),
       decoration: BoxDecoration(
-        color: const Color(0xFF2DA8C8),
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Column(
-        crossAxisAlignment: isAr
-            ? CrossAxisAlignment.end
-            : CrossAxisAlignment.start,
-        children: [
-          Text(
-            isAr ? 'موعدك القادم' : 'Next Appointment',
-            style: const TextStyle(
-                color: Colors.white70, fontSize: 12),
+        gradient: const LinearGradient(
+          colors: [JuhColors.primary, JuhColors.primaryInk],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(JuhSizes.radiusXl),
+        boxShadow: [
+          BoxShadow(
+            color: JuhColors.primary.withValues(alpha: 0.35),
+            blurRadius: 18,
+            offset: const Offset(0, 6),
           ),
-          const SizedBox(height: 6),
-          Text(
-            isAr ? appt.doctorNameAr : appt.doctorNameEn,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 22,
-              fontWeight: FontWeight.w800,
+        ],
+      ),
+      child: Stack(
+        clipBehavior: Clip.hardEdge,
+        children: [
+          // Decorative circles
+          Positioned(
+            top: -24,
+            right: isAr ? null : -24,
+            left: isAr ? -24 : null,
+            child: Container(
+              width: 120,
+              height: 120,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white.withValues(alpha: 0.07),
+              ),
             ),
           ),
-          const SizedBox(height: 8),
-          Row(
-            textDirection:
-                isAr ? TextDirection.rtl : TextDirection.ltr,
-            children: [
-              const Icon(Icons.calendar_today_outlined,
-                  color: Colors.white70, size: 14),
-              const SizedBox(width: 4),
-              Text(
-                dateFmt.format(appt.dateTime),
-                style: const TextStyle(
-                    color: Colors.white, fontSize: 13),
+          Positioned(
+            bottom: -32,
+            right: isAr ? -32 : null,
+            left: isAr ? null : -32,
+            child: Container(
+              width: 100,
+              height: 100,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white.withValues(alpha: 0.05),
               ),
-              const SizedBox(width: 12),
-              const Icon(Icons.access_time_outlined,
-                  color: Colors.white70, size: 14),
-              const SizedBox(width: 4),
-              Text(
-                timeFmt.format(appt.dateTime),
-                style: const TextStyle(
-                    color: Colors.white, fontSize: 13),
-              ),
-            ],
+            ),
           ),
-          const SizedBox(height: 16),
-          Row(
-            textDirection:
-                isAr ? TextDirection.rtl : TextDirection.ltr,
+          // Content
+          Column(
+            crossAxisAlignment:
+                isAr ? CrossAxisAlignment.end : CrossAxisAlignment.start,
             children: [
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: () =>
-                      context.push('/appointments/${appt.id}'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white,
-                    foregroundColor: const Color(0xFF2DA8C8),
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10)),
-                    padding:
-                        const EdgeInsets.symmetric(vertical: 10),
-                  ),
-                  child: Text(
-                    isAr ? 'عرض التفاصيل' : 'View Details',
-                    style: const TextStyle(
-                        fontSize: 13, fontWeight: FontWeight.w700),
+              // Badge
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(JuhSizes.radiusFull),
+                ),
+                child: Text(
+                  isAr ? 'موعدك القادم' : 'Next Appointment',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: JuhSizes.fontXs,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: OutlinedButton(
-                  onPressed: () =>
-                      context.push('/appointments'),
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: Colors.white,
-                    side: const BorderSide(
-                        color: Colors.white54, width: 1),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10)),
-                    padding:
-                        const EdgeInsets.symmetric(vertical: 10),
-                  ),
-                  child: Text(
-                    isAr ? 'كل المواعيد' : 'All Appointments',
-                    style: const TextStyle(
-                        fontSize: 13, fontWeight: FontWeight.w600),
-                  ),
+              const SizedBox(height: 10),
+              Text(
+                isAr ? appt.doctorNameAr : appt.doctorNameEn,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: JuhSizes.fontXl,
+                  fontWeight: FontWeight.w800,
                 ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                isAr ? appt.specialtyAr : appt.specialtyEn,
+                style: const TextStyle(
+                    color: Colors.white70, fontSize: JuhSizes.fontSm),
+              ),
+              const SizedBox(height: 12),
+              // Date & time chips
+              Row(
+                textDirection: isAr ? TextDirection.rtl : TextDirection.ltr,
+                children: [
+                  _InfoChip(
+                    icon: Icons.calendar_today_outlined,
+                    label: dateFmt.format(appt.dateTime),
+                  ),
+                  const SizedBox(width: 8),
+                  _InfoChip(
+                    icon: Icons.access_time_outlined,
+                    label: timeFmt.format(appt.dateTime),
+                  ),
+                ],
+              ),
+              const SizedBox(height: JuhSizes.md),
+              // Buttons
+              Row(
+                textDirection: isAr ? TextDirection.rtl : TextDirection.ltr,
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () =>
+                          context.push('/appointments/${appt.id}'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        foregroundColor: JuhColors.primary,
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.circular(JuhSizes.radiusMd)),
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                      ),
+                      child: Text(
+                        isAr ? 'عرض التفاصيل' : 'View Details',
+                        style: const TextStyle(
+                            fontSize: JuhSizes.fontSm,
+                            fontWeight: FontWeight.w700),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: () => context.push('/appointments'),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: Colors.white,
+                        side: const BorderSide(color: Colors.white38, width: 1.5),
+                        shape: RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.circular(JuhSizes.radiusMd)),
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                      ),
+                      child: Text(
+                        isAr ? 'كل المواعيد' : 'All Appointments',
+                        style: const TextStyle(
+                            fontSize: JuhSizes.fontSm,
+                            fontWeight: FontWeight.w600),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
@@ -347,7 +440,38 @@ class _NextApptCard extends StatelessWidget {
   }
 }
 
-// ── Empty next appointment card ──
+class _InfoChip extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  const _InfoChip({required this.icon, required this.label});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.15),
+        borderRadius: BorderRadius.circular(JuhSizes.radiusSm),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, color: Colors.white, size: JuhSizes.iconSm),
+          const SizedBox(width: 4),
+          Text(
+            label,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: JuhSizes.fontXs,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _EmptyNextCard extends StatelessWidget {
   final bool isAr;
   const _EmptyNextCard({required this.isAr});
@@ -355,36 +479,74 @@ class _EmptyNextCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(18),
+      padding: const EdgeInsets.all(JuhSizes.md),
       decoration: BoxDecoration(
-        color: const Color(0xFF2DA8C8),
-        borderRadius: BorderRadius.circular(20),
+        gradient: const LinearGradient(
+          colors: [JuhColors.primary, JuhColors.primaryInk],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(JuhSizes.radiusXl),
+        boxShadow: [
+          BoxShadow(
+            color: JuhColors.primary.withValues(alpha: 0.35),
+            blurRadius: 18,
+            offset: const Offset(0, 6),
+          ),
+        ],
       ),
-      child: Column(
-        crossAxisAlignment: isAr
-            ? CrossAxisAlignment.end
-            : CrossAxisAlignment.start,
+      child: Stack(
+        clipBehavior: Clip.hardEdge,
         children: [
-          Text(
-            isAr ? 'لا توجد مواعيد قادمة' : 'No upcoming appointments',
-            style: const TextStyle(
-                color: Colors.white, fontSize: 18, fontWeight: FontWeight.w700),
-          ),
-          const SizedBox(height: 6),
-          Text(
-            isAr ? 'احجز موعدك الآن' : 'Book your appointment now',
-            style: const TextStyle(color: Colors.white70, fontSize: 13),
-          ),
-          const SizedBox(height: 14),
-          ElevatedButton(
-            onPressed: () => context.push('/booking?who=self'),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.white,
-              foregroundColor: const Color(0xFF2DA8C8),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10)),
+          Positioned(
+            top: -20,
+            right: isAr ? null : -20,
+            left: isAr ? -20 : null,
+            child: Container(
+              width: 110,
+              height: 110,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white.withValues(alpha: 0.07),
+              ),
             ),
-            child: Text(isAr ? 'حجز موعد' : 'Book Now'),
+          ),
+          Column(
+            crossAxisAlignment:
+                isAr ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+            children: [
+              Text(
+                isAr ? 'لا توجد مواعيد قادمة' : 'No upcoming appointments',
+                style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: JuhSizes.fontMd,
+                    fontWeight: FontWeight.w700),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                isAr ? 'احجز موعدك الآن' : 'Book your appointment now',
+                style: const TextStyle(
+                    color: Colors.white70, fontSize: JuhSizes.fontSm),
+              ),
+              const SizedBox(height: 14),
+              ElevatedButton(
+                onPressed: () => context.push('/relatives?who=self'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  foregroundColor: JuhColors.primary,
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                      borderRadius:
+                          BorderRadius.circular(JuhSizes.radiusMd)),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 20, vertical: 10),
+                ),
+                child: Text(
+                  isAr ? 'احجز موعداً' : 'Book Now',
+                  style: const TextStyle(fontWeight: FontWeight.w700),
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -392,20 +554,22 @@ class _EmptyNextCard extends StatelessWidget {
   }
 }
 
-// ── Quick action card ──
 class _ActionCard extends StatelessWidget {
   final IconData icon;
   final Color iconColor;
+  final Color iconBg;
   final String title;
   final String subtitle;
   final VoidCallback onTap;
-
+  final bool isAr;
   const _ActionCard({
     required this.icon,
     required this.iconColor,
+    required this.iconBg,
     required this.title,
     required this.subtitle,
     required this.onTap,
+    required this.isAr,
   });
 
   @override
@@ -416,29 +580,56 @@ class _ActionCard extends StatelessWidget {
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: const Color(0xFFEEEEEE)),
+          borderRadius: BorderRadius.circular(JuhSizes.radiusLg),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.06),
+              blurRadius: 10,
+              offset: const Offset(0, 3),
+            ),
+          ],
         ),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
+          crossAxisAlignment:
+              isAr ? CrossAxisAlignment.end : CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, color: iconColor, size: 26),
-            const SizedBox(height: 6),
+            Row(
+              textDirection: isAr ? TextDirection.rtl : TextDirection.ltr,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: iconBg,
+                    borderRadius: BorderRadius.circular(JuhSizes.radiusSm),
+                  ),
+                  child: Icon(icon, color: iconColor, size: 20),
+                ),
+                Icon(
+                  isAr ? Icons.chevron_left : Icons.chevron_right,
+                  color: JuhColors.textMuted,
+                  size: 18,
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
             Text(
               title,
-              textAlign: TextAlign.right,
+              textAlign: isAr ? TextAlign.right : TextAlign.left,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
               style: const TextStyle(
-                fontSize: 13,
+                fontSize: JuhSizes.fontSm,
                 fontWeight: FontWeight.w700,
-                color: Color(0xFF1A1A2E),
+                color: JuhColors.textPrimary,
               ),
             ),
             Text(
               subtitle,
-              textAlign: TextAlign.right,
+              textAlign: isAr ? TextAlign.right : TextAlign.left,
               style: const TextStyle(
-                  fontSize: 11, color: Color(0xFF888888)),
+                  fontSize: JuhSizes.fontXs, color: JuhColors.textSecondary),
             ),
           ],
         ),
@@ -447,7 +638,6 @@ class _ActionCard extends StatelessWidget {
   }
 }
 
-// ── Bottom navigation ──
 class _BottomNav extends StatelessWidget {
   final bool isAr;
   const _BottomNav({required this.isAr});
@@ -457,11 +647,11 @@ class _BottomNav extends StatelessWidget {
     return BottomNavigationBar(
       currentIndex: 0,
       backgroundColor: Colors.white,
-      selectedItemColor: const Color(0xFF2DA8C8),
-      unselectedItemColor: const Color(0xFF888888),
+      selectedItemColor: JuhColors.primary,
+      unselectedItemColor: JuhColors.textSecondary,
       selectedLabelStyle: const TextStyle(
-          fontSize: 11, fontWeight: FontWeight.w600),
-      unselectedLabelStyle: const TextStyle(fontSize: 11),
+          fontSize: JuhSizes.fontXs, fontWeight: FontWeight.w600),
+      unselectedLabelStyle: const TextStyle(fontSize: JuhSizes.fontXs),
       elevation: 8,
       onTap: (i) {
         switch (i) {
@@ -469,13 +659,10 @@ class _BottomNav extends StatelessWidget {
             break;
           case 1:
             context.push('/appointments');
-            break;
           case 2:
-            context.push('/booking?who=self');
-            break;
+            context.push('/relatives?who=self');
           case 3:
             context.push('/profile');
-            break;
         }
       },
       items: [

@@ -2,14 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
+import 'package:intl/intl.dart' hide TextDirection;
 import '../../../core/colors.dart';
-import '../../../core/extensions.dart';
 import '../../../core/sizes.dart';
 import '../../../models/appointment.dart';
 import '../../../providers/appointments_provider.dart';
 import '../../../providers/locale_provider.dart';
-import '../../../shared/widgets/alert_banner.dart';
 import '../../../shared/widgets/app_button.dart';
 import '../../../shared/widgets/screen_header.dart';
 import '../../../shared/widgets/status_chip.dart';
@@ -26,23 +24,39 @@ class ApptDetailScreen extends ConsumerWidget {
 
     if (appt == null) {
       return Scaffold(
-        appBar: ScreenHeader(titleAr: 'تفاصيل الموعد', titleEn: 'Appointment Details'),
-        body: Center(child: Text(isAr ? 'لم يتم العثور على الموعد' : 'Appointment not found')),
+        appBar: const ScreenHeader(
+            titleAr: 'تفاصيل الموعد',
+            titleEn: 'Appointment Details'),
+        body: Center(
+            child: Text(
+          isAr ? 'لم يتم العثور على الموعد' : 'Appointment not found',
+          style: const TextStyle(color: JuhColors.textSecondary),
+        )),
       );
     }
 
-    final dateFmt = DateFormat(isAr ? 'EEEE، d MMMM yyyy' : 'EEEE, d MMMM yyyy', isAr ? 'ar' : 'en');
+    final dateFmt = DateFormat(
+        isAr ? 'EEEE، d MMMM yyyy' : 'EEEE, d MMMM yyyy',
+        isAr ? 'ar' : 'en');
     final timeFmt = DateFormat('hh:mm a');
-    final isCancellable = appt.status == ApptStatus.confirmed && appt.dateTime.isAfter(DateTime.now());
+    final isCancellable = appt.status == ApptStatus.confirmed &&
+        appt.dateTime.isAfter(DateTime.now());
+
+    final doctorName = isAr ? appt.doctorNameAr : appt.doctorNameEn;
+    final initial = doctorName
+        .replaceAll('د. ', '')
+        .replaceAll('Dr. ', '')[0];
 
     return Scaffold(
-      appBar: ScreenHeader(titleAr: 'تفاصيل الموعد', titleEn: 'Appointment Details'),
+      backgroundColor: JuhColors.bg,
+      appBar: const ScreenHeader(
+          titleAr: 'تفاصيل الموعد', titleEn: 'Appointment Details'),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(JuhSizes.md),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Doctor header card
+            // ── Hero card ──
             Container(
               padding: const EdgeInsets.all(JuhSizes.md),
               decoration: BoxDecoration(
@@ -53,115 +67,241 @@ class ApptDetailScreen extends ConsumerWidget {
                 ),
                 borderRadius: BorderRadius.circular(JuhSizes.radiusLg),
               ),
-              child: Row(
+              child: Column(
+                crossAxisAlignment: isAr
+                    ? CrossAxisAlignment.end
+                    : CrossAxisAlignment.start,
                 children: [
-                  CircleAvatar(
-                    radius: 32,
-                    backgroundColor: Colors.white24,
-                    child: Text(
-                      (isAr ? appt.doctorNameAr : appt.doctorNameEn).replaceAll('د. ', '').replaceAll('Dr. ', '')[0],
-                      style: const TextStyle(color: Colors.white, fontSize: JuhSizes.fontXl, fontWeight: FontWeight.w700),
-                    ),
+                  Row(
+                    textDirection:
+                        isAr ? TextDirection.rtl : TextDirection.ltr,
+                    children: [
+                      CircleAvatar(
+                        radius: 28,
+                        backgroundColor: Colors.white24,
+                        child: Text(
+                          initial,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: JuhSizes.fontXl,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: JuhSizes.md),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: isAr
+                              ? CrossAxisAlignment.end
+                              : CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              doctorName,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: JuhSizes.fontMd,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            Text(
+                              isAr
+                                  ? appt.doctorTitleAr
+                                  : appt.doctorTitleEn,
+                              style: const TextStyle(
+                                  color: Colors.white70,
+                                  fontSize: JuhSizes.fontSm),
+                            ),
+                          ],
+                        ),
+                      ),
+                      StatusChip(status: appt.status, isAr: isAr),
+                    ],
                   ),
-                  const SizedBox(width: JuhSizes.md),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          isAr ? appt.doctorNameAr : appt.doctorNameEn,
-                          style: const TextStyle(color: Colors.white, fontSize: JuhSizes.fontMd, fontWeight: FontWeight.w700),
+                  const SizedBox(height: JuhSizes.md),
+                  const Divider(color: Colors.white24, height: 1),
+                  const SizedBox(height: JuhSizes.md),
+                  Row(
+                    textDirection:
+                        isAr ? TextDirection.rtl : TextDirection.ltr,
+                    children: [
+                      const Icon(Icons.calendar_today_outlined,
+                          color: Colors.white70, size: JuhSizes.iconSm),
+                      const SizedBox(width: 6),
+                      Text(
+                        dateFmt.format(appt.dateTime),
+                        style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: JuhSizes.fontSm),
+                      ),
+                      const SizedBox(width: JuhSizes.md),
+                      const Icon(Icons.access_time_outlined,
+                          color: Colors.white70, size: JuhSizes.iconSm),
+                      const SizedBox(width: 6),
+                      Text(
+                        timeFmt.format(appt.dateTime),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: JuhSizes.fontSm,
+                          fontWeight: FontWeight.w700,
                         ),
-                        Text(
-                          isAr ? appt.doctorTitleAr : appt.doctorTitleEn,
-                          style: const TextStyle(color: Colors.white70, fontSize: JuhSizes.fontSm),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          isAr ? appt.specialtyAr : appt.specialtyEn,
-                          style: const TextStyle(color: Colors.white60, fontSize: JuhSizes.fontXs),
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                  StatusChip(status: appt.status, isAr: isAr),
                 ],
               ),
             ),
             const SizedBox(height: JuhSizes.md),
 
-            // Reference code
+            // ── Reference code (tap to copy) ──
             GestureDetector(
               onTap: () {
                 Clipboard.setData(ClipboardData(text: appt.refCode));
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(isAr ? 'تم نسخ الكود' : 'Code copied')),
+                  SnackBar(
+                      content: Text(
+                          isAr ? 'تم نسخ الكود' : 'Code copied')),
                 );
               },
               child: Container(
-                padding: const EdgeInsets.all(JuhSizes.md),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: JuhSizes.md, vertical: 12),
                 decoration: BoxDecoration(
                   color: JuhColors.primarySoft,
-                  borderRadius: BorderRadius.circular(JuhSizes.radiusMd),
+                  borderRadius:
+                      BorderRadius.circular(JuhSizes.radiusMd),
                 ),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  textDirection:
+                      isAr ? TextDirection.rtl : TextDirection.ltr,
                   children: [
                     Text(
                       isAr ? 'رقم المرجع' : 'Reference',
-                      style: const TextStyle(color: JuhColors.primaryInk, fontSize: JuhSizes.fontSm),
+                      style: const TextStyle(
+                          color: JuhColors.primaryInk,
+                          fontSize: JuhSizes.fontSm),
                     ),
-                    Row(
-                      children: [
-                        Text(
-                          appt.refCode,
-                          style: const TextStyle(
-                            color: JuhColors.primary,
-                            fontSize: JuhSizes.fontBase,
-                            fontWeight: FontWeight.w800,
-                            letterSpacing: 1.5,
-                          ),
-                        ),
-                        const SizedBox(width: 6),
-                        const Icon(Icons.copy, size: 16, color: JuhColors.primary),
-                      ],
+                    const Spacer(),
+                    Text(
+                      appt.refCode,
+                      style: const TextStyle(
+                        color: JuhColors.primary,
+                        fontSize: JuhSizes.fontBase,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: 1.5,
+                      ),
                     ),
+                    const SizedBox(width: 6),
+                    const Icon(Icons.copy,
+                        size: 16, color: JuhColors.primary),
                   ],
                 ),
               ),
             ),
             const SizedBox(height: JuhSizes.md),
 
-            // Details card
-            _DetailCard(rows: [
-              (Icons.person_outline, isAr ? 'المريض' : 'Patient', isAr ? appt.patientNameAr : appt.patientNameEn),
-              (Icons.shield_outlined, isAr ? 'التأمين' : 'Insurance', isAr ? appt.insuranceAr : appt.insuranceEn),
-              (Icons.calendar_today_outlined, isAr ? 'التاريخ' : 'Date', dateFmt.format(appt.dateTime)),
-              (Icons.access_time, isAr ? 'الوقت' : 'Time', timeFmt.format(appt.dateTime)),
-              (Icons.location_on_outlined, isAr ? 'الموقع' : 'Location', appt.location),
-            ], isAr: isAr),
-
+            // ── Detail rows ──
+            _DetailCard(
+              isAr: isAr,
+              rows: [
+                (
+                  Icons.person_outline,
+                  isAr ? 'المريض' : 'Patient',
+                  isAr ? appt.patientNameAr : appt.patientNameEn
+                ),
+                (
+                  Icons.shield_outlined,
+                  isAr ? 'التأمين' : 'Insurance',
+                  isAr ? appt.insuranceAr : appt.insuranceEn
+                ),
+                (
+                  Icons.local_hospital_outlined,
+                  isAr ? 'التخصص' : 'Specialty',
+                  isAr ? appt.specialtyAr : appt.specialtyEn
+                ),
+                (
+                  Icons.location_on_outlined,
+                  isAr ? 'الموقع' : 'Location',
+                  appt.location
+                ),
+              ],
+            ),
             const SizedBox(height: JuhSizes.md),
 
+            // ── Action buttons 2×2 ──
+            if (isCancellable) ...[
+              GridView.count(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                crossAxisCount: 2,
+                crossAxisSpacing: 8,
+                mainAxisSpacing: 8,
+                childAspectRatio: 3,
+                children: [
+                  _ActionBtn(
+                    icon: Icons.edit_calendar_outlined,
+                    label: isAr ? 'إعادة جدولة' : 'Reschedule',
+                    onTap: () => context.push('/relatives?who=self'),
+                    color: JuhColors.primary,
+                  ),
+                  _ActionBtn(
+                    icon: Icons.cancel_outlined,
+                    label: isAr ? 'إلغاء الموعد' : 'Cancel',
+                    onTap: () =>
+                        _showCancelDialog(context, ref, appt, isAr),
+                    color: JuhColors.error,
+                  ),
+                  _ActionBtn(
+                    icon: Icons.note_add_outlined,
+                    label: isAr ? 'إضافة ملاحظة' : 'Add Note',
+                    onTap: () {},
+                    color: JuhColors.textSecondary,
+                  ),
+                  _ActionBtn(
+                    icon: Icons.share_outlined,
+                    label: isAr ? 'مشاركة' : 'Share',
+                    onTap: () {},
+                    color: JuhColors.textSecondary,
+                  ),
+                ],
+              ),
+              const SizedBox(height: JuhSizes.md),
+            ],
+
             if (appt.status == ApptStatus.cancelled)
-              AlertBanner(
-                message: isAr ? 'هذا الموعد ملغى' : 'This appointment has been cancelled',
-                type: AlertType.error,
+              Container(
+                padding: const EdgeInsets.all(JuhSizes.md),
+                decoration: BoxDecoration(
+                  color: JuhColors.errorSoft,
+                  borderRadius:
+                      BorderRadius.circular(JuhSizes.radiusMd),
+                  border: Border.all(
+                      color: JuhColors.error.withValues(alpha: 0.3)),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.cancel_outlined,
+                        color: JuhColors.error,
+                        size: JuhSizes.iconMd),
+                    const SizedBox(width: JuhSizes.sm),
+                    Text(
+                      isAr
+                          ? 'هذا الموعد ملغى'
+                          : 'This appointment has been cancelled',
+                      style: const TextStyle(
+                          color: JuhColors.error,
+                          fontSize: JuhSizes.fontSm,
+                          fontWeight: FontWeight.w500),
+                    ),
+                  ],
+                ),
               ),
 
-            if (isCancellable) ...[
-              const SizedBox(height: JuhSizes.lg),
-              AppButton(
-                label: isAr ? 'إعادة جدولة' : 'Reschedule',
-                onTap: () => context.push('/booking?who=${appt.patientNameAr}'),
-                icon: Icons.edit_calendar,
-              ),
-              const SizedBox(height: JuhSizes.sm),
-              AppButton.outline(
-                label: isAr ? 'إلغاء الموعد' : 'Cancel Appointment',
-                onTap: () => _showCancelDialog(context, ref, appt, isAr),
-              ),
-            ],
+            const SizedBox(height: JuhSizes.lg),
+
+            AppButton.ghost(
+              label: isAr ? 'العودة للمواعيد' : 'Back to Appointments',
+              onTap: () => context.pop(),
+            ),
             const SizedBox(height: JuhSizes.md),
           ],
         ),
@@ -169,7 +309,8 @@ class ApptDetailScreen extends ConsumerWidget {
     );
   }
 
-  void _showCancelDialog(BuildContext context, WidgetRef ref, Appointment appt, bool isAr) {
+  void _showCancelDialog(
+      BuildContext context, WidgetRef ref, Appointment appt, bool isAr) {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -183,7 +324,9 @@ class ApptDetailScreen extends ConsumerWidget {
             child: Text(isAr ? 'لا' : 'No'),
           ),
           ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: JuhColors.error),
+            style: ElevatedButton.styleFrom(
+                backgroundColor: JuhColors.error,
+                foregroundColor: Colors.white),
             onPressed: () {
               ref.read(appointmentsProvider.notifier).cancel(appt.id);
               Navigator.pop(ctx);
@@ -206,9 +349,9 @@ class _DetailCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: context.cs.surface,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(JuhSizes.radiusLg),
-        border: Border.all(color: context.cs.outline),
+        border: Border.all(color: JuhColors.border),
       ),
       child: Column(
         children: rows.asMap().entries.map((e) {
@@ -217,27 +360,98 @@ class _DetailCard extends StatelessWidget {
           return Column(
             children: [
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: JuhSizes.md, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: JuhSizes.md, vertical: 12),
                 child: Row(
+                  textDirection:
+                      isAr ? TextDirection.rtl : TextDirection.ltr,
                   children: [
-                    Icon(row.$1, size: JuhSizes.iconMd, color: JuhColors.primary),
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: JuhColors.primarySoft,
+                        borderRadius:
+                            BorderRadius.circular(JuhSizes.radiusSm),
+                      ),
+                      child: Icon(row.$1,
+                          size: JuhSizes.iconMd,
+                          color: JuhColors.primary),
+                    ),
                     const SizedBox(width: JuhSizes.md),
                     Expanded(
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        crossAxisAlignment: isAr
+                            ? CrossAxisAlignment.end
+                            : CrossAxisAlignment.start,
                         children: [
-                          Text(row.$2, style: context.tt.bodySmall?.copyWith(color: context.cs.onSurfaceVariant)),
-                          Text(row.$3, style: context.tt.bodyMedium?.copyWith(fontWeight: FontWeight.w600)),
+                          Text(
+                            row.$2,
+                            style: const TextStyle(
+                              fontSize: JuhSizes.fontXs,
+                              color: JuhColors.textSecondary,
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            row.$3,
+                            style: const TextStyle(
+                              fontSize: JuhSizes.fontSm,
+                              fontWeight: FontWeight.w600,
+                              color: JuhColors.textPrimary,
+                            ),
+                          ),
                         ],
                       ),
                     ),
                   ],
                 ),
               ),
-              if (i < rows.length - 1) const Divider(height: 1),
+              if (i < rows.length - 1)
+                const Divider(height: 1, color: JuhColors.border),
             ],
           );
         }).toList(),
+      ),
+    );
+  }
+}
+
+class _ActionBtn extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final VoidCallback onTap;
+  final Color color;
+  const _ActionBtn(
+      {required this.icon,
+      required this.label,
+      required this.onTap,
+      required this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(JuhSizes.radiusMd),
+          border: Border.all(color: JuhColors.border),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, color: color, size: JuhSizes.iconMd),
+            const SizedBox(width: 6),
+            Text(
+              label,
+              style: TextStyle(
+                color: color,
+                fontSize: JuhSizes.fontXs,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

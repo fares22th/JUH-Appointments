@@ -2,12 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/colors.dart';
-import '../../../core/extensions.dart';
 import '../../../core/sizes.dart';
 import '../../../data/seed_data.dart';
 import '../../../models/doctor.dart';
-import '../../../models/insurance.dart';
-import '../../../models/specialty.dart';
 import '../../../providers/booking_provider.dart';
 import '../../../providers/locale_provider.dart';
 import '../../../shared/widgets/app_button.dart';
@@ -19,7 +16,8 @@ class BookingChooseScreen extends ConsumerStatefulWidget {
   const BookingChooseScreen({super.key, required this.who});
 
   @override
-  ConsumerState<BookingChooseScreen> createState() => _BookingChooseScreenState();
+  ConsumerState<BookingChooseScreen> createState() =>
+      _BookingChooseScreenState();
 }
 
 class _BookingChooseScreenState extends ConsumerState<BookingChooseScreen> {
@@ -50,70 +48,148 @@ class _BookingChooseScreenState extends ConsumerState<BookingChooseScreen> {
         ? ['التأمين', 'التخصص', 'الطبيب']
         : ['Insurance', 'Specialty', 'Doctor'];
 
+    final stepTitles = isAr
+        ? ['اختر نوع التأمين', 'اختر التخصص الطبي', 'اختر طبيبك']
+        : [
+            'Choose Insurance Type',
+            'Choose Medical Specialty',
+            'Choose Your Doctor'
+          ];
+
     return Scaffold(
-      appBar: ScreenHeader(
+      backgroundColor: JuhColors.bg,
+      appBar: const ScreenHeader(
         titleAr: 'احجز موعدك',
         titleEn: 'Book Appointment',
       ),
       body: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.fromLTRB(JuhSizes.md, JuhSizes.md, JuhSizes.md, 0),
-            child: ProgressSteps(current: _step + 1, total: 3, labels: stepLabels),
+            padding: const EdgeInsets.fromLTRB(
+                JuhSizes.md, JuhSizes.md, JuhSizes.md, 0),
+            child:
+                ProgressSteps(current: _step + 1, total: 3, labels: stepLabels),
           ),
           const SizedBox(height: JuhSizes.md),
+
+          // Step title
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: JuhSizes.md),
+            child: Align(
+              alignment: isAr ? Alignment.centerRight : Alignment.centerLeft,
+              child: Text(
+                stepTitles[_step],
+                style: const TextStyle(
+                  fontSize: JuhSizes.fontBase,
+                  fontWeight: FontWeight.w700,
+                  color: JuhColors.textPrimary,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: JuhSizes.sm),
+
+          // Search field (steps 1 and 2)
           if (_step == 1 || _step == 2)
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: JuhSizes.md),
+              padding: const EdgeInsets.fromLTRB(
+                  JuhSizes.md, 0, JuhSizes.md, JuhSizes.sm),
               child: TextField(
                 controller: _searchCtrl,
+                textAlign: isAr ? TextAlign.right : TextAlign.left,
                 onChanged: (_) => setState(() {}),
                 decoration: InputDecoration(
                   hintText: isAr ? 'بحث...' : 'Search...',
-                  prefixIcon: const Icon(Icons.search),
+                  hintStyle: const TextStyle(color: JuhColors.textMuted),
+                  filled: true,
+                  fillColor: Colors.white,
+                  prefixIcon:
+                      const Icon(Icons.search, color: JuhColors.textSecondary),
                   suffixIcon: query.isNotEmpty
                       ? IconButton(
-                          icon: const Icon(Icons.clear),
+                          icon: const Icon(Icons.clear,
+                              color: JuhColors.textSecondary),
                           onPressed: () {
                             _searchCtrl.clear();
                             setState(() {});
                           },
                         )
                       : null,
+                  contentPadding: const EdgeInsets.symmetric(
+                      horizontal: JuhSizes.md, vertical: 12),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(JuhSizes.radiusMd),
+                    borderSide: const BorderSide(color: JuhColors.border),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(JuhSizes.radiusMd),
+                    borderSide: const BorderSide(color: JuhColors.border),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(JuhSizes.radiusMd),
+                    borderSide:
+                        const BorderSide(color: JuhColors.primary, width: 1.5),
+                  ),
                 ),
               ),
             ),
-          const SizedBox(height: JuhSizes.sm),
+
           Expanded(
             child: _step == 0
-                ? _InsuranceList(isAr: isAr, selected: draft.insuranceId, onSelect: (id) {
-                    ref.read(bookingProvider.notifier).setInsurance(id);
-                    setState(() => _step = 1);
-                  })
+                ? _InsuranceList(
+                    isAr: isAr,
+                    selected: draft.insuranceId,
+                    onSelect: (id) {
+                      ref.read(bookingProvider.notifier).setInsurance(id);
+                      setState(() => _step = 1);
+                    },
+                  )
                 : _step == 1
-                    ? _SpecialtyList(isAr: isAr, query: query, selected: draft.specId, onSelect: (id) {
-                        ref.read(bookingProvider.notifier).setSpec(id);
-                        setState(() { _step = 2; _searchCtrl.clear(); });
-                      })
-                    : _DoctorList(isAr: isAr, query: query, specId: draft.specId, selected: draft.docId, onSelect: (id) {
-                        ref.read(bookingProvider.notifier).setDoc(id);
-                      }),
+                    ? _SpecialtyList(
+                        isAr: isAr,
+                        query: query,
+                        selected: draft.specId,
+                        onSelect: (id) {
+                          ref.read(bookingProvider.notifier).setSpec(id);
+                          setState(() {
+                            _step = 2;
+                            _searchCtrl.clear();
+                          });
+                        },
+                      )
+                    : _DoctorList(
+                        isAr: isAr,
+                        query: query,
+                        specId: draft.specId,
+                        selected: draft.docId,
+                        onSelect: (id) {
+                          ref.read(bookingProvider.notifier).setDoc(id);
+                          setState(() {});
+                        },
+                      ),
           ),
+
           if (_step == 2 && draft.docId != null)
             Padding(
-              padding: const EdgeInsets.all(JuhSizes.md),
+              padding: const EdgeInsets.fromLTRB(
+                  JuhSizes.md, 0, JuhSizes.md, JuhSizes.sm),
               child: AppButton(
                 label: isAr ? 'التالي: اختر الموعد' : 'Next: Choose Slot',
                 onTap: () => context.push('/calendar?who=${widget.who}'),
                 icon: Icons.arrow_forward,
               ),
             ),
+
           if (_step > 0)
             Padding(
-              padding: const EdgeInsets.fromLTRB(JuhSizes.md, 0, JuhSizes.md, JuhSizes.md),
+              padding: const EdgeInsets.fromLTRB(
+                  JuhSizes.md, 0, JuhSizes.md, JuhSizes.md),
               child: AppButton.ghost(
                 label: isAr ? 'رجوع' : 'Back',
-                onTap: () => setState(() { _step--; _searchCtrl.clear(); }),
+                onTap: () => setState(() {
+                  _step--;
+                  _searchCtrl.clear();
+                }),
                 icon: Icons.arrow_back,
               ),
             ),
@@ -127,7 +203,8 @@ class _InsuranceList extends StatelessWidget {
   final bool isAr;
   final String? selected;
   final ValueChanged<String> onSelect;
-  const _InsuranceList({required this.isAr, this.selected, required this.onSelect});
+  const _InsuranceList(
+      {required this.isAr, this.selected, required this.onSelect});
 
   @override
   Widget build(BuildContext context) {
@@ -138,11 +215,11 @@ class _InsuranceList extends StatelessWidget {
       itemBuilder: (ctx, i) {
         final ins = SeedData.insurances[i];
         return _SelectTile(
-          leading: Text(ins.icon, style: const TextStyle(fontSize: 24)),
+          isAr: isAr,
+          leading: Text(ins.icon, style: const TextStyle(fontSize: 22)),
           title: isAr ? ins.nameAr : ins.nameEn,
           isSelected: selected == ins.id,
           onTap: () => onSelect(ins.id),
-          isAr: isAr,
         );
       },
     );
@@ -154,17 +231,25 @@ class _SpecialtyList extends StatelessWidget {
   final String query;
   final String? selected;
   final ValueChanged<String> onSelect;
-  const _SpecialtyList({required this.isAr, required this.query, this.selected, required this.onSelect});
+  const _SpecialtyList(
+      {required this.isAr,
+      required this.query,
+      this.selected,
+      required this.onSelect});
 
   @override
   Widget build(BuildContext context) {
-    final filtered = SeedData.specialties.where((s) =>
-        query.isEmpty ||
-        s.nameAr.contains(query) ||
-        s.nameEn.toLowerCase().contains(query)).toList();
+    final filtered = SeedData.specialties
+        .where((s) =>
+            query.isEmpty ||
+            s.nameAr.contains(query) ||
+            s.nameEn.toLowerCase().contains(query))
+        .toList();
 
     if (filtered.isEmpty) {
-      return Center(child: Text(isAr ? 'لا توجد نتائج' : 'No results'));
+      return Center(
+          child: Text(isAr ? 'لا توجد نتائج' : 'No results',
+              style: const TextStyle(color: JuhColors.textSecondary)));
     }
     return ListView.separated(
       padding: const EdgeInsets.symmetric(horizontal: JuhSizes.md),
@@ -172,12 +257,18 @@ class _SpecialtyList extends StatelessWidget {
       itemCount: filtered.length,
       itemBuilder: (ctx, i) {
         final s = filtered[i];
+        final docCount =
+            SeedData.doctors.where((d) => d.specialtyId == s.id).length;
+        final subtitle = isAr
+            ? '$docCount طبيب متاح'
+            : '$docCount doctor${docCount == 1 ? '' : 's'} available';
         return _SelectTile(
-          leading: Text(s.icon, style: const TextStyle(fontSize: 24)),
+          isAr: isAr,
+          leading: Text(s.icon, style: const TextStyle(fontSize: 22)),
           title: isAr ? s.nameAr : s.nameEn,
+          subtitle: subtitle,
           isSelected: selected == s.id,
           onTap: () => onSelect(s.id),
-          isAr: isAr,
         );
       },
     );
@@ -190,20 +281,29 @@ class _DoctorList extends StatelessWidget {
   final String? specId;
   final String? selected;
   final ValueChanged<String> onSelect;
-  const _DoctorList({required this.isAr, required this.query, this.specId, this.selected, required this.onSelect});
+  const _DoctorList(
+      {required this.isAr,
+      required this.query,
+      this.specId,
+      this.selected,
+      required this.onSelect});
 
   @override
   Widget build(BuildContext context) {
     final all = specId != null
         ? SeedData.doctors.where((d) => d.specialtyId == specId).toList()
         : SeedData.doctors;
-    final filtered = all.where((d) =>
-        query.isEmpty ||
-        d.nameAr.contains(query) ||
-        d.nameEn.toLowerCase().contains(query)).toList();
+    final filtered = all
+        .where((d) =>
+            query.isEmpty ||
+            d.nameAr.contains(query) ||
+            d.nameEn.toLowerCase().contains(query))
+        .toList();
 
     if (filtered.isEmpty) {
-      return Center(child: Text(isAr ? 'لا توجد نتائج' : 'No results'));
+      return Center(
+          child: Text(isAr ? 'لا توجد نتائج' : 'No results',
+              style: const TextStyle(color: JuhColors.textSecondary)));
     }
     return ListView.separated(
       padding: const EdgeInsets.symmetric(horizontal: JuhSizes.md),
@@ -211,19 +311,32 @@ class _DoctorList extends StatelessWidget {
       itemCount: filtered.length,
       itemBuilder: (ctx, i) {
         final d = filtered[i];
-        return _DoctorTile(doc: d, isAr: isAr, isSelected: selected == d.id, onTap: () => onSelect(d.id));
+        return _DoctorTile(
+            doc: d,
+            isAr: isAr,
+            isSelected: selected == d.id,
+            onTap: () => onSelect(d.id));
       },
     );
   }
 }
 
 class _SelectTile extends StatelessWidget {
+  final bool isAr;
   final Widget leading;
   final String title;
+  final String? subtitle;
   final bool isSelected;
   final VoidCallback onTap;
-  final bool isAr;
-  const _SelectTile({required this.leading, required this.title, required this.isSelected, required this.onTap, required this.isAr});
+
+  const _SelectTile({
+    required this.isAr,
+    required this.leading,
+    required this.title,
+    this.subtitle,
+    required this.isSelected,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -233,16 +346,48 @@ class _SelectTile extends StatelessWidget {
         duration: const Duration(milliseconds: 150),
         padding: const EdgeInsets.all(JuhSizes.md),
         decoration: BoxDecoration(
-          color: isSelected ? JuhColors.primarySoft : context.cs.surface,
+          color: isSelected ? JuhColors.primarySoft : Colors.white,
           borderRadius: BorderRadius.circular(JuhSizes.radiusLg),
-          border: Border.all(color: isSelected ? JuhColors.primary : context.cs.outline, width: isSelected ? 2 : 1),
+          border: Border.all(
+              color: isSelected ? JuhColors.primary : JuhColors.border,
+              width: isSelected ? 1.5 : 1),
         ),
         child: Row(
+          textDirection: isAr ? TextDirection.rtl : TextDirection.ltr,
           children: [
             leading,
             const SizedBox(width: JuhSizes.md),
-            Expanded(child: Text(title, style: context.tt.bodyLarge?.copyWith(fontWeight: FontWeight.w500))),
-            if (isSelected) const Icon(Icons.check_circle, color: JuhColors.primary),
+            Expanded(
+              child: Column(
+                crossAxisAlignment:
+                    isAr ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: JuhSizes.fontBase,
+                      fontWeight: FontWeight.w600,
+                      color: isSelected
+                          ? JuhColors.primaryInk
+                          : JuhColors.textPrimary,
+                    ),
+                  ),
+                  if (subtitle != null) ...[
+                    const SizedBox(height: 2),
+                    Text(
+                      subtitle!,
+                      style: const TextStyle(
+                        fontSize: JuhSizes.fontXs,
+                        color: JuhColors.textSecondary,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+            if (isSelected)
+              const Icon(Icons.check_circle,
+                  color: JuhColors.primary, size: JuhSizes.iconLg),
           ],
         ),
       ),
@@ -255,27 +400,38 @@ class _DoctorTile extends StatelessWidget {
   final bool isAr;
   final bool isSelected;
   final VoidCallback onTap;
-  const _DoctorTile({required this.doc, required this.isAr, required this.isSelected, required this.onTap});
+  const _DoctorTile(
+      {required this.doc,
+      required this.isAr,
+      required this.isSelected,
+      required this.onTap});
 
   @override
   Widget build(BuildContext context) {
+    final nameDisplay = isAr ? doc.nameAr : doc.nameEn;
+    final initial = nameDisplay.replaceAll('د. ', '').replaceAll('Dr. ', '')[0];
+
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 150),
         padding: const EdgeInsets.all(JuhSizes.md),
         decoration: BoxDecoration(
-          color: isSelected ? JuhColors.primarySoft : context.cs.surface,
+          color: isSelected ? JuhColors.primarySoft : Colors.white,
           borderRadius: BorderRadius.circular(JuhSizes.radiusLg),
-          border: Border.all(color: isSelected ? JuhColors.primary : context.cs.outline, width: isSelected ? 2 : 1),
+          border: Border.all(
+              color: isSelected ? JuhColors.primary : JuhColors.border,
+              width: isSelected ? 1.5 : 1),
         ),
         child: Row(
+          textDirection: isAr ? TextDirection.rtl : TextDirection.ltr,
           children: [
             CircleAvatar(
-              backgroundColor: isSelected ? JuhColors.primary : JuhColors.primarySoft,
+              backgroundColor:
+                  isSelected ? JuhColors.primary : JuhColors.primarySoft,
               radius: 26,
               child: Text(
-                (isAr ? doc.nameAr : doc.nameEn).replaceAll('د. ', '').replaceAll('Dr. ', '')[0],
+                initial,
                 style: TextStyle(
                   color: isSelected ? Colors.white : JuhColors.primary,
                   fontWeight: FontWeight.w700,
@@ -286,27 +442,66 @@ class _DoctorTile extends StatelessWidget {
             const SizedBox(width: JuhSizes.md),
             Expanded(
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment:
+                    isAr ? CrossAxisAlignment.end : CrossAxisAlignment.start,
                 children: [
-                  Text(isAr ? doc.nameAr : doc.nameEn, style: context.tt.titleSmall),
-                  Text(isAr ? doc.titleAr : doc.titleEn,
-                      style: context.tt.bodySmall?.copyWith(color: context.cs.onSurfaceVariant)),
-                  const SizedBox(height: 4),
+                  Text(
+                    nameDisplay,
+                    style: const TextStyle(
+                      fontSize: JuhSizes.fontBase,
+                      fontWeight: FontWeight.w700,
+                      color: JuhColors.textPrimary,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    isAr ? doc.titleAr : doc.titleEn,
+                    style: const TextStyle(
+                      fontSize: JuhSizes.fontXs,
+                      color: JuhColors.textSecondary,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
                   Row(
+                    textDirection: isAr ? TextDirection.rtl : TextDirection.ltr,
                     children: [
-                      const Icon(Icons.star, size: 14, color: Colors.amber),
-                      const SizedBox(width: 2),
-                      Text('${doc.rating}', style: const TextStyle(fontSize: JuhSizes.fontXs, fontWeight: FontWeight.w600)),
+                      const Icon(Icons.star, size: 13, color: Colors.amber),
+                      const SizedBox(width: 3),
+                      Text(
+                        '${doc.rating}',
+                        style: const TextStyle(
+                          fontSize: JuhSizes.fontXs,
+                          fontWeight: FontWeight.w600,
+                          color: JuhColors.textPrimary,
+                        ),
+                      ),
                       const SizedBox(width: 4),
-                      Text('(${doc.reviewCount})', style: TextStyle(fontSize: JuhSizes.fontXs, color: context.cs.onSurfaceVariant)),
+                      Text(
+                        '(${doc.reviewCount})',
+                        style: const TextStyle(
+                          fontSize: JuhSizes.fontXs,
+                          color: JuhColors.textSecondary,
+                        ),
+                      ),
                       const Spacer(),
-                      Text(doc.consultFee, style: const TextStyle(fontSize: JuhSizes.fontSm, fontWeight: FontWeight.w700, color: JuhColors.primary)),
+                      Text(
+                        doc.consultFee,
+                        style: const TextStyle(
+                          fontSize: JuhSizes.fontSm,
+                          fontWeight: FontWeight.w700,
+                          color: JuhColors.primary,
+                        ),
+                      ),
                     ],
                   ),
                 ],
               ),
             ),
-            if (isSelected) const Icon(Icons.check_circle, color: JuhColors.primary),
+            if (isSelected) ...[
+              const SizedBox(width: JuhSizes.sm),
+              const Icon(Icons.check_circle,
+                  color: JuhColors.primary, size: JuhSizes.iconLg),
+            ],
           ],
         ),
       ),

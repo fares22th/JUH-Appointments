@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../../core/extensions.dart';
+import '../../../core/colors.dart';
 import '../../../core/sizes.dart';
 import '../../../providers/locale_provider.dart';
 import '../../../shared/widgets/app_button.dart';
+import '../../../shared/widgets/form_widgets.dart';
 import '../../../shared/widgets/screen_header.dart';
 
 class ContactScreen extends ConsumerStatefulWidget {
@@ -18,7 +19,7 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
   final _form = GlobalKey<FormState>();
   final _phoneCtrl = TextEditingController();
   final _emailCtrl = TextEditingController();
-  bool _smsSmsEnabled = true;
+  bool _smsEnabled = true;
   bool _emailReminderEnabled = true;
   bool _loading = false;
 
@@ -44,21 +45,14 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
     final isAr = ref.watch(localeProvider).languageCode == 'ar';
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F7FA),
-      appBar: ScreenHeader(
+      backgroundColor: JuhColors.bg,
+      appBar: const ScreenHeader(
         titleAr: 'بيانات التواصل',
-        titleEn: 'Contact Info',
+        titleEn: 'Contact Details',
       ),
       body: Column(
         children: [
-          // Progress bar – step 2 of 3
-          LinearProgressIndicator(
-            value: 0.66,
-            backgroundColor: const Color(0xFFE0E0E0),
-            color: const Color(0xFF2DA8C8),
-            minHeight: 3,
-          ),
-
+          const SegmentBar(step: 1, total: 2), // auth step 2/2
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(JuhSizes.md),
@@ -69,14 +63,15 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
                   children: [
                     const SizedBox(height: JuhSizes.md),
 
-                    // ── Identity verified card ──
+                    // Identity verified card
                     Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 14),
+                          horizontal: JuhSizes.md, vertical: 14),
                       decoration: BoxDecoration(
                         color: Colors.white,
-                        borderRadius: BorderRadius.circular(14),
-                        border: Border.all(color: const Color(0xFFEEEEEE)),
+                        borderRadius:
+                            BorderRadius.circular(JuhSizes.radiusMd),
+                        border: Border.all(color: JuhColors.border),
                       ),
                       child: Row(
                         textDirection:
@@ -93,112 +88,73 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
                                       ? 'أحمد عبدالله العلي'
                                       : 'Ahmad Abdullah Al-Ali',
                                   style: const TextStyle(
-                                    fontSize: 15,
+                                    fontSize: JuhSizes.fontBase,
                                     fontWeight: FontWeight.w700,
-                                    color: Color(0xFF1A1A2E),
+                                    color: JuhColors.textPrimary,
                                   ),
                                 ),
-                                const SizedBox(height: 3),
+                                const SizedBox(height: 2),
                                 Text(
                                   isAr
                                       ? 'تم التحقق من الهوية بنجاح'
                                       : 'Identity verified successfully',
                                   style: const TextStyle(
-                                    fontSize: 12,
-                                    color: Color(0xFF888888),
+                                    fontSize: JuhSizes.fontSm,
+                                    color: JuhColors.textSecondary,
                                   ),
                                 ),
                               ],
                             ),
                           ),
-                          const SizedBox(width: 12),
+                          const SizedBox(width: JuhSizes.sm),
                           Container(
                             width: 36,
                             height: 36,
                             decoration: BoxDecoration(
-                              color: const Color(0xFF2DA8C8),
-                              borderRadius: BorderRadius.circular(10),
+                              color: JuhColors.successSoft,
+                              borderRadius: BorderRadius.circular(
+                                  JuhSizes.radiusFull),
                             ),
                             child: const Icon(Icons.check,
-                                color: Colors.white, size: 20),
+                                color: JuhColors.success, size: 20),
                           ),
                         ],
                       ),
                     ),
-
                     const SizedBox(height: JuhSizes.lg),
 
-                    // ── Section label: contact ──
+                    // Section label
                     Align(
-                      alignment:
-                          isAr ? Alignment.centerRight : Alignment.centerLeft,
+                      alignment: isAr
+                          ? Alignment.centerRight
+                          : Alignment.centerLeft,
                       child: Text(
                         isAr ? 'وسائل التواصل' : 'Contact Methods',
                         style: const TextStyle(
-                          fontSize: 13,
+                          fontSize: JuhSizes.fontSm,
                           fontWeight: FontWeight.w600,
-                          color: Color(0xFF888888),
+                          color: JuhColors.textSecondary,
                         ),
                       ),
                     ),
                     const SizedBox(height: 10),
 
-                    // ── Phone field ──
-                    Align(
-                      alignment:
-                          isAr ? Alignment.centerRight : Alignment.centerLeft,
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        textDirection:
-                            isAr ? TextDirection.rtl : TextDirection.ltr,
-                        children: [
-                          const Text('*',
-                              style: TextStyle(
-                                  color: Colors.red,
-                                  fontWeight: FontWeight.bold)),
-                          const SizedBox(width: 4),
-                          Text(
-                            isAr ? 'رقم الهاتف المحمول' : 'Mobile Number',
-                            style: const TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w600,
-                              color: Color(0xFF333333),
-                            ),
-                          ),
-                        ],
-                      ),
+                    FieldLabel(
+                      label: isAr ? 'رقم الهاتف المحمول' : 'Mobile Number',
+                      required: true,
+                      isAr: isAr,
                     ),
                     const SizedBox(height: 6),
-                    TextFormField(
+                    JuhFormField(
                       controller: _phoneCtrl,
+                      hint: '0791234567',
+                      isAr: isAr,
                       keyboardType: TextInputType.phone,
-                      textAlign: isAr ? TextAlign.right : TextAlign.left,
-                      style: const TextStyle(
-                          fontSize: 16, fontWeight: FontWeight.w500),
-                      decoration: InputDecoration(
-                        filled: true,
-                        fillColor: Colors.white,
-                        hintText: '0791234567',
-                        contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 14),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: const BorderSide(
-                              color: Color(0xFFDDDDDD), width: 1),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: const BorderSide(
-                              color: Color(0xFFDDDDDD), width: 1),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: const BorderSide(
-                              color: Color(0xFF2DA8C8), width: 1.5),
-                        ),
-                      ),
+                      helperText: isAr
+                          ? 'سيتم استخدامه لإرسال رسالة تأكيد الموعد'
+                          : 'Used to send appointment confirmation',
                       validator: (v) {
-                        if (v?.isEmpty ?? true) {
+                        if (v == null || v.isEmpty) {
                           return isAr
                               ? 'رقم الهاتف مطلوب'
                               : 'Phone is required';
@@ -206,126 +162,67 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
                         return null;
                       },
                     ),
-                    const SizedBox(height: 6),
-                    Align(
-                      alignment:
-                          isAr ? Alignment.centerRight : Alignment.centerLeft,
-                      child: Text(
-                        isAr
-                            ? 'سيتم استخدامه لإرسال رسالة تأكيد الموعد'
-                            : 'Used to send appointment confirmation',
-                        style: const TextStyle(
-                            fontSize: 12, color: Color(0xFF888888)),
-                      ),
-                    ),
-
                     const SizedBox(height: JuhSizes.md),
 
-                    // ── Email field ──
-                    Align(
-                      alignment:
-                          isAr ? Alignment.centerRight : Alignment.centerLeft,
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        textDirection:
-                            isAr ? TextDirection.rtl : TextDirection.ltr,
-                        children: [
-                          const Text('*',
-                              style: TextStyle(
-                                  color: Colors.red,
-                                  fontWeight: FontWeight.bold)),
-                          const SizedBox(width: 4),
-                          Text(
-                            isAr ? 'البريد الإلكتروني' : 'Email Address',
-                            style: const TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w600,
-                              color: Color(0xFF333333),
-                            ),
-                          ),
-                        ],
-                      ),
+                    FieldLabel(
+                      label: isAr ? 'البريد الإلكتروني' : 'Email Address',
+                      required: true,
+                      isAr: isAr,
                     ),
                     const SizedBox(height: 6),
-                    TextFormField(
+                    JuhFormField(
                       controller: _emailCtrl,
+                      hint: 'a.alali@example.jo',
+                      isAr: isAr,
                       keyboardType: TextInputType.emailAddress,
-                      textAlign: isAr ? TextAlign.right : TextAlign.left,
-                      style: const TextStyle(
-                          fontSize: 16, fontWeight: FontWeight.w500),
-                      decoration: InputDecoration(
-                        filled: true,
-                        fillColor: Colors.white,
-                        hintText: 'a.alali@example.jo',
-                        contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 14),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: const BorderSide(
-                              color: Color(0xFFDDDDDD), width: 1),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: const BorderSide(
-                              color: Color(0xFFDDDDDD), width: 1),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: const BorderSide(
-                              color: Color(0xFF2DA8C8), width: 1.5),
-                        ),
-                      ),
                       validator: (v) {
-                        if (v?.isEmpty ?? true) {
+                        if (v == null || v.isEmpty) {
                           return isAr ? 'البريد مطلوب' : 'Email is required';
                         }
-                        if (!v!.contains('@')) {
+                        if (!v.contains('@')) {
                           return isAr ? 'بريد غير صحيح' : 'Invalid email';
                         }
                         return null;
                       },
                     ),
-
                     const SizedBox(height: JuhSizes.lg),
 
-                    // ── Reminders section ──
+                    // Reminders section
                     Align(
-                      alignment:
-                          isAr ? Alignment.centerRight : Alignment.centerLeft,
+                      alignment: isAr
+                          ? Alignment.centerRight
+                          : Alignment.centerLeft,
                       child: Text(
                         isAr ? 'التذكيرات' : 'Reminders',
                         style: const TextStyle(
-                          fontSize: 13,
+                          fontSize: JuhSizes.fontSm,
                           fontWeight: FontWeight.w600,
-                          color: Color(0xFF888888),
+                          color: JuhColors.textSecondary,
                         ),
                       ),
                     ),
                     const SizedBox(height: 10),
 
-                    // SMS reminder toggle
                     _ReminderTile(
                       isAr: isAr,
                       icon: Icons.phone_outlined,
                       label: isAr
                           ? 'رسالة نصية قبل الموعد بيوم'
                           : 'SMS reminder 1 day before',
-                      value: _smsSmsEnabled,
-                      onChanged: (v) => setState(() => _smsSmsEnabled = v),
+                      value: _smsEnabled,
+                      onChanged: (v) => setState(() => _smsEnabled = v),
                     ),
                     const SizedBox(height: 10),
-
-                    // Email reminder toggle
                     _ReminderTile(
                       isAr: isAr,
                       icon: Icons.email_outlined,
-                      label:
-                          isAr ? 'بريد تأكيد + بريد تذكير' : 'Confirmation + reminder email',
+                      label: isAr
+                          ? 'بريد تأكيد + بريد تذكير'
+                          : 'Confirmation + reminder email',
                       value: _emailReminderEnabled,
                       onChanged: (v) =>
                           setState(() => _emailReminderEnabled = v),
                     ),
-
                     const SizedBox(height: JuhSizes.xl),
                   ],
                 ),
@@ -333,10 +230,10 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
             ),
           ),
 
-          // ── Bottom button ──
           Container(
-            color: const Color(0xFFF5F7FA),
-            padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
+            color: JuhColors.bg,
+            padding: const EdgeInsets.fromLTRB(
+                JuhSizes.md, JuhSizes.sm, JuhSizes.md, JuhSizes.lg),
             child: AppButton(
               label: isAr ? 'حفظ ومتابعة' : 'Save & Continue',
               onTap: _submit,
@@ -349,7 +246,6 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
   }
 }
 
-// ── Reusable reminder toggle tile ──
 class _ReminderTile extends StatelessWidget {
   final bool isAr;
   final IconData icon;
@@ -368,11 +264,12 @@ class _ReminderTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      padding: const EdgeInsets.symmetric(
+          horizontal: JuhSizes.md, vertical: 12),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFEEEEEE)),
+        borderRadius: BorderRadius.circular(JuhSizes.radiusMd),
+        border: Border.all(color: JuhColors.border),
       ),
       child: Row(
         textDirection: isAr ? TextDirection.rtl : TextDirection.ltr,
@@ -380,32 +277,32 @@ class _ReminderTile extends StatelessWidget {
           Switch(
             value: value,
             onChanged: onChanged,
-            activeColor: Colors.white,
-            activeTrackColor: const Color(0xFF2DA8C8),
+            activeThumbColor: Colors.white,
+            activeTrackColor: JuhColors.primary,
             inactiveThumbColor: Colors.white,
-            inactiveTrackColor: const Color(0xFFCCCCCC),
+            inactiveTrackColor: JuhColors.border,
             materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
           ),
-          const SizedBox(width: 10),
+          const SizedBox(width: JuhSizes.sm),
           Expanded(
             child: Text(
               label,
               textAlign: isAr ? TextAlign.right : TextAlign.left,
               style: const TextStyle(
-                fontSize: 14,
+                fontSize: JuhSizes.fontSm,
                 fontWeight: FontWeight.w500,
-                color: Color(0xFF333333),
+                color: JuhColors.textPrimary,
               ),
             ),
           ),
-          const SizedBox(width: 10),
+          const SizedBox(width: JuhSizes.sm),
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: const Color(0xFFE8F6FA),
-              borderRadius: BorderRadius.circular(8),
+              color: JuhColors.primarySoft,
+              borderRadius: BorderRadius.circular(JuhSizes.radiusSm),
             ),
-            child: Icon(icon, color: const Color(0xFF2DA8C8), size: 18),
+            child: Icon(icon, color: JuhColors.primary, size: 18),
           ),
         ],
       ),
