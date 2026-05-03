@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/colors.dart';
 import '../../../core/sizes.dart';
+import '../../../providers/auth_provider.dart';
 import '../../../providers/locale_provider.dart';
 import '../../../shared/widgets/app_button.dart';
 import '../../../shared/widgets/form_widgets.dart';
@@ -33,8 +34,12 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
     if (!_form.currentState!.validate()) return;
     if (!_agreed) return;
     setState(() => _loading = true);
-    await Future.delayed(const Duration(milliseconds: 800));
+    await Future.delayed(const Duration(milliseconds: 600));
     if (mounted) {
+      ref.read(pendingSignupProvider.notifier).state = PendingSignup(
+        nationalId: _nationalIdCtrl.text.trim(),
+        civilRecord: _familyIdCtrl.text.trim(),
+      );
       setState(() => _loading = false);
       context.push('/contact');
     }

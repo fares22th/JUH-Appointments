@@ -303,7 +303,7 @@ class _ApptCard extends StatelessWidget {
                 Expanded(
                   child: OutlinedButton(
                     onPressed: () =>
-                        context.push('/relatives?who=self'),
+                        context.push('/booking?who=self'),
                     style: OutlinedButton.styleFrom(
                       foregroundColor: JuhColors.textSecondary,
                       side:

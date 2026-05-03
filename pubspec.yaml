@@ -34,6 +34,12 @@ dependencies:
   equatable: ^2.0.5
   collection: ^1.18.0
   shared_preferences: ^2.2.3
+  nhost_sdk: ^5.8.0
+  nhost_flutter_auth: ^4.2.1
+  http: ^1.6.0
+
+dependency_overrides:
+  path_provider_android: 2.2.12
 
 dev_dependencies:
   flutter_test:
@@ -43,7 +49,17 @@ dev_dependencies:
   riverpod_generator: ^2.4.0
   custom_lint: ^0.6.4
   riverpod_lint: ^2.3.10
+  flutter_launcher_icons: ^0.14.3
+
+flutter_launcher_icons:
+  android: true
+  ios: false
+  image_path: "assets/images/juh_logo.png"
+  min_sdk_android: 21
+  adaptive_icon_background: "#FFFFFF"
+  adaptive_icon_foreground: "assets/images/juh_logo.png"
 
 flutter:
   uses-material-design: true
   assets:
+    - assets/images/

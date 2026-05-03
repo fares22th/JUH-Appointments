@@ -136,8 +136,6 @@ class _ConfirmScreenState extends ConsumerState<ConfirmScreen> {
         (isAr ? 'الطبيب' : 'Doctor', isAr ? doc.nameAr : doc.nameEn),
       (isAr ? 'التاريخ' : 'Date', dateFmt),
       (isAr ? 'الوقت' : 'Time', timeFmt),
-      if (doc != null)
-        (isAr ? 'رسوم الاستشارة' : 'Consult Fee', doc.consultFee),
       (isAr ? 'كود المرجع' : 'Reference', _refCode),
     ];
 

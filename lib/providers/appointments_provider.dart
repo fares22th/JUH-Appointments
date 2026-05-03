@@ -1,6 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/appointment.dart';
-import '../data/seed_data.dart';
 
 final appointmentsProvider =
     StateNotifierProvider<AppointmentsNotifier, List<Appointment>>((ref) {
@@ -8,7 +7,7 @@ final appointmentsProvider =
 });
 
 class AppointmentsNotifier extends StateNotifier<List<Appointment>> {
-  AppointmentsNotifier() : super(SeedData.seedAppointments('demo-user'));
+  AppointmentsNotifier() : super([]);
 
   void add(Appointment a) => state = [a, ...state];
 

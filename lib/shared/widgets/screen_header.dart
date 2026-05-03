@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../../core/sizes.dart';
 import '../../providers/locale_provider.dart';
 import 'lang_toggle.dart';
@@ -42,7 +43,13 @@ class ScreenHeader extends ConsumerWidget implements PreferredSizeWidget {
                     isAr ? Icons.arrow_forward_ios : Icons.arrow_back_ios,
                     size: JuhSizes.iconMd,
                   ),
-                  onPressed: () => Navigator.of(context).maybePop(),
+                  onPressed: () {
+                    if (context.canPop()) {
+                      context.pop();
+                    } else {
+                      context.go('/home');
+                    }
+                  },
                 )
               : null),
       title: Text(title),

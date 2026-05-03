@@ -133,7 +133,7 @@ class WelcomeScreen extends ConsumerWidget {
                     SizedBox(
                       height: JuhSizes.btnHeight,
                       child: OutlinedButton(
-                        onPressed: () => context.go('/home'),
+                        onPressed: () => context.push('/login'),
                         style: OutlinedButton.styleFrom(
                           foregroundColor: JuhColors.primary,
                           side: const BorderSide(

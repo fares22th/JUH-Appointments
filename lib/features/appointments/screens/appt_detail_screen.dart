@@ -240,7 +240,7 @@ class ApptDetailScreen extends ConsumerWidget {
                   _ActionBtn(
                     icon: Icons.edit_calendar_outlined,
                     label: isAr ? 'إعادة جدولة' : 'Reschedule',
-                    onTap: () => context.push('/relatives?who=self'),
+                    onTap: () => context.push('/booking?who=self'),
                     color: JuhColors.primary,
                   ),
                   _ActionBtn(

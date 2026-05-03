@@ -34,82 +34,82 @@ class SeedData {
       id: 'd1', specialtyId: 'cardio',
       nameAr: 'د. أحمد الرشيد', nameEn: 'Dr. Ahmad Al-Rashid',
       titleAr: 'استشاري قلب وأوعية دموية', titleEn: 'Consultant Cardiologist',
-      rating: 4.9, reviewCount: 312, consultFee: '35 JD',
+      rating: 4.9, reviewCount: 312,
     ),
     Doctor(
       id: 'd2', specialtyId: 'cardio',
       nameAr: 'د. سارة المنصور', nameEn: 'Dr. Sara Al-Mansour',
       titleAr: 'أخصائية قلب', titleEn: 'Cardiologist',
-      rating: 4.7, reviewCount: 198, consultFee: '30 JD',
+      rating: 4.7, reviewCount: 198,
     ),
     // Neurology
     Doctor(
       id: 'd3', specialtyId: 'neuro',
       nameAr: 'د. خالد العمري', nameEn: 'Dr. Khalid Al-Omari',
       titleAr: 'استشاري أمراض عصبية', titleEn: 'Consultant Neurologist',
-      rating: 4.8, reviewCount: 245, consultFee: '40 JD',
+      rating: 4.8, reviewCount: 245,
     ),
     // Orthopedics
     Doctor(
       id: 'd4', specialtyId: 'ortho',
       nameAr: 'د. ليلى حسن', nameEn: 'Dr. Layla Hassan',
       titleAr: 'أخصائية عظام ومفاصل', titleEn: 'Orthopedic Specialist',
-      rating: 4.6, reviewCount: 167, consultFee: '32 JD',
+      rating: 4.6, reviewCount: 167,
     ),
     Doctor(
       id: 'd5', specialtyId: 'ortho',
       nameAr: 'د. محمد السالم', nameEn: 'Dr. Mohammed Al-Salem',
       titleAr: 'استشاري جراحة العظام', titleEn: 'Consultant Orthopedic Surgeon',
-      rating: 4.9, reviewCount: 421, consultFee: '45 JD',
+      rating: 4.9, reviewCount: 421,
     ),
     // Pediatrics
     Doctor(
       id: 'd6', specialtyId: 'peds',
       nameAr: 'د. نور الزيادنة', nameEn: 'Dr. Nour Al-Ziyadneh',
       titleAr: 'استشارية طب أطفال', titleEn: 'Consultant Pediatrician',
-      rating: 4.9, reviewCount: 534, consultFee: '30 JD',
+      rating: 4.9, reviewCount: 534,
     ),
     // Dermatology
     Doctor(
       id: 'd7', specialtyId: 'derm',
       nameAr: 'د. رنا الحوراني', nameEn: 'Dr. Rana Al-Hourani',
       titleAr: 'أخصائية جلدية وتجميل', titleEn: 'Dermatology & Aesthetics',
-      rating: 4.8, reviewCount: 289, consultFee: '35 JD',
+      rating: 4.8, reviewCount: 289,
     ),
     // ENT
     Doctor(
       id: 'd8', specialtyId: 'ent',
       nameAr: 'د. علي القاسم', nameEn: 'Dr. Ali Al-Qasem',
       titleAr: 'استشاري أنف وأذن وحنجرة', titleEn: 'Consultant ENT',
-      rating: 4.7, reviewCount: 156, consultFee: '30 JD',
+      rating: 4.7, reviewCount: 156,
     ),
     // Ophthalmology
     Doctor(
       id: 'd9', specialtyId: 'ophthal',
       nameAr: 'د. هالة نصر', nameEn: 'Dr. Hala Nasr',
       titleAr: 'استشارية طب عيون', titleEn: 'Consultant Ophthalmologist',
-      rating: 4.8, reviewCount: 203, consultFee: '35 JD',
+      rating: 4.8, reviewCount: 203,
     ),
     // General
     Doctor(
       id: 'd10', specialtyId: 'gen',
       nameAr: 'د. بسام الطراونة', nameEn: 'Dr. Bassam Al-Tarawna',
       titleAr: 'طب باطني عام', titleEn: 'General Internist',
-      rating: 4.5, reviewCount: 312, consultFee: '25 JD',
+      rating: 4.5, reviewCount: 312,
     ),
     // Psychiatry
     Doctor(
       id: 'd11', specialtyId: 'psych',
       nameAr: 'د. منى الشرفات', nameEn: 'Dr. Mona Al-Sharfat',
       titleAr: 'استشارية طب نفسي', titleEn: 'Consultant Psychiatrist',
-      rating: 4.9, reviewCount: 178, consultFee: '45 JD',
+      rating: 4.9, reviewCount: 178,
     ),
     // Gynecology
     Doctor(
       id: 'd12', specialtyId: 'gyne',
       nameAr: 'د. إيمان العبادي', nameEn: 'Dr. Iman Al-Abadi',
       titleAr: 'استشارية نساء وولادة', titleEn: 'Consultant Gynecologist',
-      rating: 4.9, reviewCount: 467, consultFee: '40 JD',
+      rating: 4.9, reviewCount: 467,
     ),
   ];
 

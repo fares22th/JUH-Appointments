@@ -1,23 +1,45 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../core/nhost.dart';
 import '../models/profile.dart';
 import '../models/relative.dart';
 import '../data/seed_data.dart';
+import 'auth_provider.dart';
 
-final profileProvider = StateNotifierProvider<ProfileNotifier, Profile>((ref) {
-  return ProfileNotifier();
+Profile _profileFromNhost() {
+  final user = nhostClient.auth.currentUser;
+  if (user == null) {
+    return Profile(
+      id: 'guest',
+      nameAr: 'مستخدم',
+      nameEn: 'User',
+      nationalId: '',
+      phone: '',
+      email: '',
+      createdAt: DateTime.now(),
+    );
+  }
+  final meta = user.metadata ?? {};
+  final name = user.displayName.isNotEmpty ? user.displayName : 'مستخدم';
+  return Profile(
+    id: user.id,
+    nameAr: name,
+    nameEn: name,
+    nationalId: (meta['nationalId'] as String?) ?? '',
+    phone: (meta['phone'] as String?) ?? '',
+    email: (meta['contactEmail'] as String?) ?? '',
+    createdAt: user.createdAt,
+  );
+}
+
+final profileProvider =
+    StateNotifierProvider<ProfileNotifier, Profile>((ref) {
+  // Rebuild whenever auth state changes so profile reflects current user
+  ref.watch(authProvider);
+  return ProfileNotifier(_profileFromNhost());
 });
 
 class ProfileNotifier extends StateNotifier<Profile> {
-  ProfileNotifier()
-      : super(Profile(
-          id: 'demo-user',
-          nameAr: 'فارس أحمد',
-          nameEn: 'Faris Ahmed',
-          nationalId: '9876543210',
-          phone: '+962 79 123 4567',
-          email: 'faris.ahmed@example.com',
-          createdAt: DateTime(2024, 1, 15),
-        ));
+  ProfileNotifier(Profile initial) : super(initial);
 
   void update({String? phone, String? email}) {
     state = state.copyWith(phone: phone, email: email);

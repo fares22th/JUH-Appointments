@@ -10,7 +10,6 @@ class Doctor extends Equatable {
   final String? avatarUrl;
   final double rating;
   final int reviewCount;
-  final String consultFee;
 
   const Doctor({
     required this.id,
@@ -22,7 +21,6 @@ class Doctor extends Equatable {
     this.avatarUrl,
     required this.rating,
     required this.reviewCount,
-    required this.consultFee,
   });
 
   @override

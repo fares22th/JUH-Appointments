@@ -13,7 +13,12 @@ import '../../../shared/widgets/screen_header.dart';
 
 class BookingChooseScreen extends ConsumerStatefulWidget {
   final String who;
-  const BookingChooseScreen({super.key, required this.who});
+  final String? initialInsuranceId;
+  const BookingChooseScreen({
+    super.key,
+    required this.who,
+    this.initialInsuranceId,
+  });
 
   @override
   ConsumerState<BookingChooseScreen> createState() =>
@@ -28,7 +33,14 @@ class _BookingChooseScreenState extends ConsumerState<BookingChooseScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(bookingProvider.notifier).reset(widget.who);
+      final notifier = ref.read(bookingProvider.notifier);
+      notifier.reset(widget.who);
+      if (widget.initialInsuranceId != null) {
+        notifier.setInsurance(widget.initialInsuranceId!);
+        if (mounted) {
+          setState(() => _step = 1);
+        }
+      }
     });
   }
 
@@ -484,14 +496,6 @@ class _DoctorTile extends StatelessWidget {
                         ),
                       ),
                       const Spacer(),
-                      Text(
-                        doc.consultFee,
-                        style: const TextStyle(
-                          fontSize: JuhSizes.fontSm,
-                          fontWeight: FontWeight.w700,
-                          color: JuhColors.primary,
-                        ),
-                      ),
                     ],
                   ),
                 ],

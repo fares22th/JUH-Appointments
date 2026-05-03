@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/colors.dart';
+import '../../../core/nhost.dart';
 import '../../../core/sizes.dart';
 import '../../../providers/locale_provider.dart';
 import '../../../providers/profile_provider.dart';
@@ -51,12 +52,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     final profile = ref.watch(profileProvider);
     final relatives = ref.watch(relativesProvider);
     final isDark = ref.watch(themeModeProvider) == ThemeMode.dark;
+    final cs = Theme.of(context).colorScheme;
 
     final name = isAr ? profile.nameAr : profile.nameEn;
     final initial = name[0];
 
     return Scaffold(
-      backgroundColor: JuhColors.bg,
+      backgroundColor: cs.surface,
       appBar: const ScreenHeader(
         titleAr: 'بياناتي',
         titleEn: 'My Profile',
@@ -70,9 +72,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             Container(
               padding: const EdgeInsets.all(JuhSizes.md),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: cs.surface,
                 borderRadius: BorderRadius.circular(JuhSizes.radiusLg),
-                border: Border.all(color: JuhColors.border),
+                border: Border.all(color: cs.outlineVariant),
               ),
               child: Column(
                 children: [
@@ -82,8 +84,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     height: 80,
                     decoration: BoxDecoration(
                       color: JuhColors.primary,
-                      borderRadius:
-                          BorderRadius.circular(JuhSizes.radiusLg),
+                      borderRadius: BorderRadius.circular(JuhSizes.radiusLg),
                     ),
                     child: Center(
                       child: Text(
@@ -100,22 +101,21 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
                   Text(
                     name,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: JuhSizes.fontLg,
                       fontWeight: FontWeight.w800,
-                      color: JuhColors.textPrimary,
+                      color: cs.onSurface,
                     ),
                   ),
                   const SizedBox(height: 4),
 
                   // Verified chip
                   Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 10, vertical: 3),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
                     decoration: BoxDecoration(
                       color: JuhColors.successSoft,
-                      borderRadius:
-                          BorderRadius.circular(JuhSizes.radiusFull),
+                      borderRadius: BorderRadius.circular(JuhSizes.radiusFull),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -138,9 +138,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
                   Text(
                     profile.nationalId,
-                    style: const TextStyle(
-                        fontSize: JuhSizes.fontXs,
-                        color: JuhColors.textSecondary),
+                    style: TextStyle(
+                        fontSize: JuhSizes.fontXs, color: cs.onSurfaceVariant),
                   ),
                 ],
               ),
@@ -168,8 +167,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             const SizedBox(height: 10),
 
             if (_editingContact) ...[
-              FieldLabel(
-                  label: isAr ? 'رقم الجوال' : 'Phone', isAr: isAr),
+              FieldLabel(label: isAr ? 'رقم الجوال' : 'Phone', isAr: isAr),
               const SizedBox(height: 6),
               JuhFormField(
                 controller: _phoneCtrl,
@@ -179,8 +177,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               ),
               const SizedBox(height: JuhSizes.md),
               FieldLabel(
-                  label: isAr ? 'البريد الإلكتروني' : 'Email',
-                  isAr: isAr),
+                  label: isAr ? 'البريد الإلكتروني' : 'Email', isAr: isAr),
               const SizedBox(height: 6),
               JuhFormField(
                 controller: _emailCtrl,
@@ -206,15 +203,21 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               _ContactCard(
                 isAr: isAr,
                 rows: [
-                  (Icons.phone_outlined,
-                      isAr ? 'الجوال' : 'Phone',
-                      profile.phone),
-                  (Icons.email_outlined,
-                      isAr ? 'البريد' : 'Email',
-                      profile.email),
-                  (Icons.badge_outlined,
-                      isAr ? 'الرقم الوطني' : 'National ID',
-                      profile.nationalId),
+                  (
+                    Icons.phone_outlined,
+                    isAr ? 'الجوال' : 'Phone',
+                    profile.phone
+                  ),
+                  (
+                    Icons.email_outlined,
+                    isAr ? 'البريد' : 'Email',
+                    profile.email
+                  ),
+                  (
+                    Icons.badge_outlined,
+                    isAr ? 'الرقم الوطني' : 'National ID',
+                    profile.nationalId
+                  ),
                 ],
               ),
             ],
@@ -243,9 +246,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
             Container(
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: cs.surface,
                 borderRadius: BorderRadius.circular(JuhSizes.radiusLg),
-                border: Border.all(color: JuhColors.border),
+                border: Border.all(color: cs.outlineVariant),
               ),
               child: Column(
                 children: relatives.asMap().entries.map((e) {
@@ -257,9 +260,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         padding: const EdgeInsets.symmetric(
                             horizontal: JuhSizes.md, vertical: 12),
                         child: Row(
-                          textDirection: isAr
-                              ? TextDirection.rtl
-                              : TextDirection.ltr,
+                          textDirection:
+                              isAr ? TextDirection.rtl : TextDirection.ltr,
                           children: [
                             Container(
                               width: 38,
@@ -288,17 +290,17 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                 children: [
                                   Text(
                                     isAr ? r.nameAr : r.nameEn,
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       fontSize: JuhSizes.fontSm,
                                       fontWeight: FontWeight.w600,
-                                      color: JuhColors.textPrimary,
+                                      color: cs.onSurface,
                                     ),
                                   ),
                                   Text(
                                     '${r.relationLabel(isAr)} • ${r.nationalId}',
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       fontSize: JuhSizes.fontXs,
-                                      color: JuhColors.textSecondary,
+                                      color: cs.onSurfaceVariant,
                                     ),
                                   ),
                                 ],
@@ -308,8 +310,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         ),
                       ),
                       if (i < relatives.length - 1)
-                        const Divider(
-                            height: 1, color: JuhColors.border),
+                        Divider(height: 1, color: cs.outlineVariant),
                     ],
                   );
                 }).toList(),
@@ -319,16 +320,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             const SizedBox(height: JuhSizes.lg),
 
             // ── Settings ──
-            _SectionHeader(
-                isAr: isAr,
-                title: isAr ? 'الإعدادات' : 'Settings'),
+            _SectionHeader(isAr: isAr, title: isAr ? 'الإعدادات' : 'Settings'),
             const SizedBox(height: 10),
 
             Container(
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: cs.surface,
                 borderRadius: BorderRadius.circular(JuhSizes.radiusLg),
-                border: Border.all(color: JuhColors.border),
+                border: Border.all(color: cs.outlineVariant),
               ),
               child: Column(
                 children: [
@@ -338,30 +337,26 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         ref.read(themeModeProvider.notifier).toggle(),
                     title: Text(
                       isAr ? 'الوضع الليلي' : 'Dark Mode',
-                      style: const TextStyle(
-                          fontSize: JuhSizes.fontSm,
-                          color: JuhColors.textPrimary),
+                      style: TextStyle(
+                          fontSize: JuhSizes.fontSm, color: cs.onSurface),
                     ),
-                    secondary: const Icon(Icons.dark_mode_outlined,
-                        color: JuhColors.textSecondary),
+                    secondary: Icon(Icons.dark_mode_outlined,
+                        color: cs.onSurfaceVariant),
                     activeThumbColor: Colors.white,
                     activeTrackColor: JuhColors.primary,
                   ),
-                  const Divider(height: 1, color: JuhColors.border),
+                  Divider(height: 1, color: cs.outlineVariant),
                   ListTile(
-                    leading: const Icon(Icons.email_outlined,
-                        color: JuhColors.textSecondary),
+                    leading:
+                        Icon(Icons.email_outlined, color: cs.onSurfaceVariant),
                     title: Text(
                       isAr ? 'البريد الوارد' : 'Inbox',
-                      style: const TextStyle(
-                          fontSize: JuhSizes.fontSm,
-                          color: JuhColors.textPrimary),
+                      style: TextStyle(
+                          fontSize: JuhSizes.fontSm, color: cs.onSurface),
                     ),
                     trailing: Icon(
-                      isAr
-                          ? Icons.chevron_left
-                          : Icons.chevron_right,
-                      color: JuhColors.textSecondary,
+                      isAr ? Icons.chevron_left : Icons.chevron_right,
+                      color: cs.onSurfaceVariant,
                     ),
                     onTap: () => context.push('/email'),
                   ),
@@ -372,7 +367,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             const SizedBox(height: JuhSizes.lg),
             AppButton.outline(
               label: isAr ? 'تسجيل الخروج' : 'Sign Out',
-              onTap: () => context.go('/'),
+              onTap: () async {
+                await nhostClient.auth.signOut();
+                if (context.mounted) context.go('/welcome');
+              },
               icon: Icons.logout,
             ),
             const SizedBox(height: JuhSizes.md),
@@ -387,20 +385,20 @@ class _SectionHeader extends StatelessWidget {
   final bool isAr;
   final String title;
   final Widget? action;
-  const _SectionHeader(
-      {required this.isAr, required this.title, this.action});
+  const _SectionHeader({required this.isAr, required this.title, this.action});
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return Row(
       textDirection: isAr ? TextDirection.rtl : TextDirection.ltr,
       children: [
         Text(
           title,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: JuhSizes.fontSm,
             fontWeight: FontWeight.w600,
-            color: JuhColors.textSecondary,
+            color: cs.onSurfaceVariant,
           ),
         ),
         const Spacer(),
@@ -417,11 +415,12 @@ class _ContactCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: cs.surface,
         borderRadius: BorderRadius.circular(JuhSizes.radiusLg),
-        border: Border.all(color: JuhColors.border),
+        border: Border.all(color: cs.outlineVariant),
       ),
       child: Column(
         children: rows.asMap().entries.map((e) {
@@ -433,19 +432,16 @@ class _ContactCard extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(
                     horizontal: JuhSizes.md, vertical: 12),
                 child: Row(
-                  textDirection:
-                      isAr ? TextDirection.rtl : TextDirection.ltr,
+                  textDirection: isAr ? TextDirection.rtl : TextDirection.ltr,
                   children: [
                     Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
                         color: JuhColors.primarySoft,
-                        borderRadius:
-                            BorderRadius.circular(JuhSizes.radiusSm),
+                        borderRadius: BorderRadius.circular(JuhSizes.radiusSm),
                       ),
                       child: Icon(row.$1,
-                          color: JuhColors.primary,
-                          size: JuhSizes.iconMd),
+                          color: JuhColors.primary, size: JuhSizes.iconMd),
                     ),
                     const SizedBox(width: JuhSizes.md),
                     Expanded(
@@ -456,18 +452,18 @@ class _ContactCard extends StatelessWidget {
                         children: [
                           Text(
                             row.$2,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: JuhSizes.fontXs,
-                              color: JuhColors.textSecondary,
+                              color: cs.onSurfaceVariant,
                             ),
                           ),
                           const SizedBox(height: 2),
                           Text(
                             row.$3,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: JuhSizes.fontSm,
                               fontWeight: FontWeight.w600,
-                              color: JuhColors.textPrimary,
+                              color: cs.onSurface,
                             ),
                           ),
                         ],
@@ -477,7 +473,7 @@ class _ContactCard extends StatelessWidget {
                 ),
               ),
               if (i < rows.length - 1)
-                const Divider(height: 1, color: JuhColors.border),
+                Divider(height: 1, color: cs.outlineVariant),
             ],
           );
         }).toList(),
