@@ -6,7 +6,6 @@ import '../../../core/nhost.dart';
 import '../../../core/sizes.dart';
 import '../../../providers/locale_provider.dart';
 import '../../../providers/profile_provider.dart';
-import '../../../providers/theme_provider.dart';
 import '../../../shared/widgets/app_button.dart';
 import '../../../shared/widgets/form_widgets.dart';
 import '../../../shared/widgets/screen_header.dart';
@@ -51,7 +50,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     final isAr = ref.watch(localeProvider).languageCode == 'ar';
     final profile = ref.watch(profileProvider);
     final relatives = ref.watch(relativesProvider);
-    final isDark = ref.watch(themeModeProvider) == ThemeMode.dark;
     final cs = Theme.of(context).colorScheme;
 
     final name = isAr ? profile.nameAr : profile.nameEn;
@@ -151,14 +149,19 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               isAr: isAr,
               title: isAr ? 'بيانات التواصل' : 'Contact Details',
               action: !_editingContact
-                  ? GestureDetector(
+                  ? InkWell(
                       onTap: () => setState(() => _editingContact = true),
-                      child: Text(
-                        isAr ? 'تعديل' : 'Edit',
-                        style: const TextStyle(
-                          color: JuhColors.primary,
-                          fontSize: JuhSizes.fontSm,
-                          fontWeight: FontWeight.w600,
+                      borderRadius: BorderRadius.circular(JuhSizes.radiusSm),
+                      splashColor: JuhColors.primary.withValues(alpha: 0.15),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                        child: Text(
+                          isAr ? 'تعديل' : 'Edit',
+                          style: const TextStyle(
+                            color: JuhColors.primary,
+                            fontSize: JuhSizes.fontSm,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       ),
                     )
@@ -230,14 +233,19 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               title: isAr
                   ? 'الأقارب (${relatives.length})'
                   : 'Relatives (${relatives.length})',
-              action: GestureDetector(
+              action: InkWell(
                 onTap: () => context.push('/relatives'),
-                child: Text(
-                  isAr ? 'إدارة' : 'Manage',
-                  style: const TextStyle(
-                    color: JuhColors.primary,
-                    fontSize: JuhSizes.fontSm,
-                    fontWeight: FontWeight.w600,
+                borderRadius: BorderRadius.circular(JuhSizes.radiusSm),
+                splashColor: JuhColors.primary.withValues(alpha: 0.15),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                  child: Text(
+                    isAr ? 'إدارة' : 'Manage',
+                    style: const TextStyle(
+                      color: JuhColors.primary,
+                      fontSize: JuhSizes.fontSm,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
               ),
@@ -314,53 +322,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     ],
                   );
                 }).toList(),
-              ),
-            ),
-
-            const SizedBox(height: JuhSizes.lg),
-
-            // ── Settings ──
-            _SectionHeader(isAr: isAr, title: isAr ? 'الإعدادات' : 'Settings'),
-            const SizedBox(height: 10),
-
-            Container(
-              decoration: BoxDecoration(
-                color: cs.surface,
-                borderRadius: BorderRadius.circular(JuhSizes.radiusLg),
-                border: Border.all(color: cs.outlineVariant),
-              ),
-              child: Column(
-                children: [
-                  SwitchListTile(
-                    value: isDark,
-                    onChanged: (_) =>
-                        ref.read(themeModeProvider.notifier).toggle(),
-                    title: Text(
-                      isAr ? 'الوضع الليلي' : 'Dark Mode',
-                      style: TextStyle(
-                          fontSize: JuhSizes.fontSm, color: cs.onSurface),
-                    ),
-                    secondary: Icon(Icons.dark_mode_outlined,
-                        color: cs.onSurfaceVariant),
-                    activeThumbColor: Colors.white,
-                    activeTrackColor: JuhColors.primary,
-                  ),
-                  Divider(height: 1, color: cs.outlineVariant),
-                  ListTile(
-                    leading:
-                        Icon(Icons.email_outlined, color: cs.onSurfaceVariant),
-                    title: Text(
-                      isAr ? 'البريد الوارد' : 'Inbox',
-                      style: TextStyle(
-                          fontSize: JuhSizes.fontSm, color: cs.onSurface),
-                    ),
-                    trailing: Icon(
-                      isAr ? Icons.chevron_left : Icons.chevron_right,
-                      color: cs.onSurfaceVariant,
-                    ),
-                    onTap: () => context.push('/email'),
-                  ),
-                ],
               ),
             ),
 

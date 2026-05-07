@@ -283,38 +283,45 @@ class _FilterChip extends StatelessWidget {
     final cs = Theme.of(context).colorScheme;
     return Padding(
       padding: const EdgeInsets.only(right: 6),
-      child: GestureDetector(
-        onTap: onTap,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 180),
-          padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 7),
-          decoration: BoxDecoration(
-            color: selected ? selectedColor : cs.surface,
-            borderRadius: BorderRadius.circular(JuhSizes.radiusFull),
-            border: Border.all(color: selected ? selectedColor : cs.outline),
-            boxShadow: selected
-                ? [BoxShadow(color: selectedColor.withValues(alpha: 0.25), blurRadius: 6)]
-                : null,
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              if (emoji != null) ...[
-                Text(emoji!, style: const TextStyle(fontSize: 13)),
-                const SizedBox(width: 5),
-              ] else if (icon != null) ...[
-                Icon(icon, size: 13, color: selected ? Colors.white : cs.onSurface),
-                const SizedBox(width: 5),
-              ],
-              Text(
-                label,
-                style: TextStyle(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w600,
-                  color: selected ? Colors.white : cs.onSurface,
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(JuhSizes.radiusFull),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: onTap,
+          splashColor: selectedColor.withValues(alpha: 0.20),
+          highlightColor: selectedColor.withValues(alpha: 0.10),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 180),
+            padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 7),
+            decoration: BoxDecoration(
+              color: selected ? selectedColor : cs.surface,
+              borderRadius: BorderRadius.circular(JuhSizes.radiusFull),
+              border: Border.all(color: selected ? selectedColor : cs.outline),
+              boxShadow: selected
+                  ? [BoxShadow(color: selectedColor.withValues(alpha: 0.25), blurRadius: 6)]
+                  : null,
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (emoji != null) ...[
+                  Text(emoji!, style: const TextStyle(fontSize: 13)),
+                  const SizedBox(width: 5),
+                ] else if (icon != null) ...[
+                  Icon(icon, size: 13, color: selected ? Colors.white : cs.onSurface),
+                  const SizedBox(width: 5),
+                ],
+                Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                    color: selected ? Colors.white : cs.onSurface,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -372,7 +379,7 @@ class _DoctorCard extends StatelessWidget {
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(
-                    crossAxisAlignment: isAr ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // Name
                       Text(

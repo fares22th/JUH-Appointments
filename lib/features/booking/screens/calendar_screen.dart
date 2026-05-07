@@ -120,14 +120,19 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                         ],
                       ),
                     ),
-                    GestureDetector(
+                    InkWell(
                       onTap: () => context.pop(),
-                      child: Text(
-                        isAr ? 'تغيير' : 'Change',
-                        style: const TextStyle(
-                          fontSize: JuhSizes.fontSm,
-                          fontWeight: FontWeight.w600,
-                          color: JuhColors.primary,
+                      borderRadius: BorderRadius.circular(4),
+                      splashColor: JuhColors.primary.withValues(alpha: 0.15),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                        child: Text(
+                          isAr ? 'تغيير' : 'Change',
+                          style: const TextStyle(
+                            fontSize: JuhSizes.fontSm,
+                            fontWeight: FontWeight.w600,
+                            color: JuhColors.primary,
+                          ),
                         ),
                       ),
                     ),
@@ -227,61 +232,67 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                     SeedData.availableSlots
                         .any((s) => !_isBooked(date, s));
 
-                return GestureDetector(
-                  onTap: isDisabled
-                      ? null
-                      : () => setState(() {
-                            _selectedDay = date;
-                            _selectedSlot = null;
-                          }),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        width: 32,
-                        height: 32,
-                        decoration: BoxDecoration(
-                          color: isSelected
-                              ? JuhColors.primary
-                              : isToday
-                                  ? JuhColors.primarySoft
-                                  : Colors.transparent,
-                          borderRadius: BorderRadius.circular(
-                              JuhSizes.radiusSm),
-                        ),
-                        child: Center(
-                          child: Text(
-                            '$day',
-                            style: TextStyle(
-                              fontSize: JuhSizes.fontSm,
-                              fontWeight:
-                                  isSelected || isToday
-                                      ? FontWeight.w700
-                                      : FontWeight.w400,
-                              color: isDisabled
-                                  ? JuhColors.border
-                                  : isSelected
-                                      ? Colors.white
-                                      : isToday
-                                          ? JuhColors.primary
-                                          : JuhColors.textPrimary,
+                return Material(
+                  color: Colors.transparent,
+                  borderRadius: BorderRadius.circular(JuhSizes.radiusSm),
+                  clipBehavior: Clip.antiAlias,
+                  child: InkWell(
+                    onTap: isDisabled
+                        ? null
+                        : () => setState(() {
+                              _selectedDay = date;
+                              _selectedSlot = null;
+                            }),
+                    splashColor: JuhColors.primary.withValues(alpha: 0.20),
+                    highlightColor: JuhColors.primary.withValues(alpha: 0.10),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          width: 32,
+                          height: 32,
+                          decoration: BoxDecoration(
+                            color: isSelected
+                                ? JuhColors.primary
+                                : isToday
+                                    ? JuhColors.primarySoft
+                                    : Colors.transparent,
+                            borderRadius: BorderRadius.circular(
+                                JuhSizes.radiusSm),
+                          ),
+                          child: Center(
+                            child: Text(
+                              '$day',
+                              style: TextStyle(
+                                fontSize: JuhSizes.fontSm,
+                                fontWeight: isSelected || isToday
+                                    ? FontWeight.w700
+                                    : FontWeight.w400,
+                                color: isDisabled
+                                    ? JuhColors.border
+                                    : isSelected
+                                        ? Colors.white
+                                        : isToday
+                                            ? JuhColors.primary
+                                            : JuhColors.textPrimary,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      if (hasAvailable && !isSelected)
-                        Container(
-                          width: 5,
-                          height: 5,
-                          margin: const EdgeInsets.only(top: 2),
-                          decoration: const BoxDecoration(
-                            color: JuhColors.success,
-                            shape: BoxShape.circle,
-                          ),
-                        )
-                      else
-                        const SizedBox(height: 7),
-                    ],
+                        if (hasAvailable && !isSelected)
+                          Container(
+                            width: 5,
+                            height: 5,
+                            margin: const EdgeInsets.only(top: 2),
+                            decoration: const BoxDecoration(
+                              color: JuhColors.success,
+                              shape: BoxShape.circle,
+                            ),
+                          )
+                        else
+                          const SizedBox(height: 7),
+                      ],
+                    ),
                   ),
                 );
               },
@@ -339,54 +350,58 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                             final isSlotSelected =
                                 _selectedSlot == slot;
 
-                            return GestureDetector(
-                              onTap: booked
-                                  ? null
-                                  : () => setState(
-                                      () => _selectedSlot = slot),
-                              child: AnimatedContainer(
-                                duration:
-                                    const Duration(milliseconds: 150),
-                                decoration: BoxDecoration(
-                                  color: booked
-                                      ? JuhColors.bg
-                                      : isSlotSelected
-                                          ? JuhColors.primary
-                                          : JuhColors.primarySoft,
-                                  borderRadius: BorderRadius.circular(
-                                      JuhSizes.radiusSm),
-                                  border: Border.all(
+                            return Material(
+                              color: Colors.transparent,
+                              borderRadius: BorderRadius.circular(JuhSizes.radiusSm),
+                              clipBehavior: Clip.antiAlias,
+                              child: InkWell(
+                                onTap: booked
+                                    ? null
+                                    : () => setState(
+                                        () => _selectedSlot = slot),
+                                splashColor: JuhColors.primary.withValues(alpha: 0.20),
+                                highlightColor: JuhColors.primary.withValues(alpha: 0.10),
+                                child: AnimatedContainer(
+                                  duration: const Duration(milliseconds: 150),
+                                  decoration: BoxDecoration(
                                     color: booked
-                                        ? JuhColors.border
+                                        ? JuhColors.bg
                                         : isSlotSelected
                                             ? JuhColors.primary
-                                            : JuhColors.primary
-                                                .withValues(alpha: 0.3),
+                                            : JuhColors.primarySoft,
+                                    borderRadius: BorderRadius.circular(
+                                        JuhSizes.radiusSm),
+                                    border: Border.all(
+                                      color: booked
+                                          ? JuhColors.border
+                                          : isSlotSelected
+                                              ? JuhColors.primary
+                                              : JuhColors.primary
+                                                  .withValues(alpha: 0.3),
+                                    ),
                                   ),
-                                ),
-                                child: Center(
-                                  child: booked
-                                      ? Text(
-                                          slot,
-                                          style: const TextStyle(
-                                            fontSize: JuhSizes.fontSm,
-                                            color: JuhColors.border,
-                                            decoration: TextDecoration
-                                                .lineThrough,
-                                            decorationColor:
-                                                JuhColors.border,
+                                  child: Center(
+                                    child: booked
+                                        ? Text(
+                                            slot,
+                                            style: const TextStyle(
+                                              fontSize: JuhSizes.fontSm,
+                                              color: JuhColors.border,
+                                              decoration: TextDecoration.lineThrough,
+                                              decorationColor: JuhColors.border,
+                                            ),
+                                          )
+                                        : Text(
+                                            slot,
+                                            style: TextStyle(
+                                              fontSize: JuhSizes.fontSm,
+                                              fontWeight: FontWeight.w600,
+                                              color: isSlotSelected
+                                                  ? Colors.white
+                                                  : JuhColors.primary,
+                                            ),
                                           ),
-                                        )
-                                      : Text(
-                                          slot,
-                                          style: TextStyle(
-                                            fontSize: JuhSizes.fontSm,
-                                            fontWeight: FontWeight.w600,
-                                            color: isSlotSelected
-                                                ? Colors.white
-                                                : JuhColors.primary,
-                                          ),
-                                        ),
+                                  ),
                                 ),
                               ),
                             );

@@ -317,7 +317,7 @@ class _StaticRow extends StatelessWidget {
           Expanded(
             child: Column(
               crossAxisAlignment:
-                  isAr ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+                  CrossAxisAlignment.start,
               children: [
                 Text(label,
                     style: const TextStyle(

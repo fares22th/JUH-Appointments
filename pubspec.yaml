@@ -38,6 +38,11 @@ dependencies:
   nhost_flutter_auth: ^4.2.1
   http: ^1.6.0
 
+  # Notifications
+  flutter_local_notifications: ^17.2.4
+  timezone: ^0.9.4
+  flutter_timezone: ^1.0.4
+
 dependency_overrides:
   path_provider_android: 2.2.12
 

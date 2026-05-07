@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart' hide TextDirection;
 import 'package:uuid/uuid.dart';
 import '../../../core/colors.dart';
+import '../../../core/notification_service.dart';
 import '../../../core/sizes.dart';
 import '../../../data/seed_data.dart';
 import '../../../models/appointment.dart';
@@ -58,9 +59,10 @@ class _ConfirmScreenState extends ConsumerState<ConfirmScreen> {
 
     final isAr = ref.read(localeProvider).languageCode == 'ar';
     final dt = draft.dateTime!;
+    final apptId = const Uuid().v4();
 
     ref.read(appointmentsProvider.notifier).add(Appointment(
-          id: const Uuid().v4(),
+          id: apptId,
           patientNameAr: patient.nameAr,
           patientNameEn: patient.nameEn,
           doctorNameAr: doc.nameAr,
@@ -78,6 +80,22 @@ class _ConfirmScreenState extends ConsumerState<ConfirmScreen> {
           refCode: _refCode,
           status: ApptStatus.confirmed,
         ));
+
+    // Push immediate confirmation + schedule reminders
+    NotificationService.notifyBookingConfirmed(
+      appointmentId: apptId,
+      doctorNameAr: doc.nameAr,
+      doctorNameEn: doc.nameEn,
+      refCode: _refCode,
+    );
+    NotificationService.scheduleReminders(
+      appointmentId: apptId,
+      appointmentTime: dt,
+      doctorNameAr: doc.nameAr,
+      doctorNameEn: doc.nameEn,
+      specialtyAr: spec.nameAr,
+      specialtyEn: spec.nameEn,
+    );
 
     setState(() {
       _loading = false;

@@ -153,47 +153,53 @@ class ApptDetailScreen extends ConsumerWidget {
             const SizedBox(height: JuhSizes.md),
 
             // ── Reference code (tap to copy) ──
-            GestureDetector(
-              onTap: () {
-                Clipboard.setData(ClipboardData(text: appt.refCode));
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                      content: Text(
-                          isAr ? 'تم نسخ الكود' : 'Code copied')),
-                );
-              },
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: JuhSizes.md, vertical: 12),
-                decoration: BoxDecoration(
-                  color: JuhColors.primarySoft,
-                  borderRadius:
-                      BorderRadius.circular(JuhSizes.radiusMd),
-                ),
-                child: Row(
-                  textDirection:
-                      isAr ? TextDirection.rtl : TextDirection.ltr,
-                  children: [
-                    Text(
-                      isAr ? 'رقم المرجع' : 'Reference',
-                      style: const TextStyle(
-                          color: JuhColors.primaryInk,
-                          fontSize: JuhSizes.fontSm),
-                    ),
-                    const Spacer(),
-                    Text(
-                      appt.refCode,
-                      style: const TextStyle(
-                        color: JuhColors.primary,
-                        fontSize: JuhSizes.fontBase,
-                        fontWeight: FontWeight.w800,
-                        letterSpacing: 1.5,
+            Material(
+              color: Colors.transparent,
+              borderRadius: BorderRadius.circular(JuhSizes.radiusMd),
+              clipBehavior: Clip.antiAlias,
+              child: InkWell(
+                onTap: () {
+                  Clipboard.setData(ClipboardData(text: appt.refCode));
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                        content: Text(
+                            isAr ? 'تم نسخ الكود' : 'Code copied')),
+                  );
+                },
+                splashColor: JuhColors.primary.withValues(alpha: 0.12),
+                highlightColor: JuhColors.primary.withValues(alpha: 0.06),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: JuhSizes.md, vertical: 12),
+                  decoration: BoxDecoration(
+                    color: JuhColors.primarySoft,
+                    borderRadius: BorderRadius.circular(JuhSizes.radiusMd),
+                  ),
+                  child: Row(
+                    textDirection:
+                        isAr ? TextDirection.rtl : TextDirection.ltr,
+                    children: [
+                      Text(
+                        isAr ? 'رقم المرجع' : 'Reference',
+                        style: const TextStyle(
+                            color: JuhColors.primaryInk,
+                            fontSize: JuhSizes.fontSm),
                       ),
-                    ),
-                    const SizedBox(width: 6),
-                    const Icon(Icons.copy,
-                        size: 16, color: JuhColors.primary),
-                  ],
+                      const Spacer(),
+                      Text(
+                        appt.refCode,
+                        style: const TextStyle(
+                          color: JuhColors.primary,
+                          fontSize: JuhSizes.fontBase,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: 1.5,
+                        ),
+                      ),
+                      const SizedBox(width: 6),
+                      const Icon(Icons.copy,
+                          size: 16, color: JuhColors.primary),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -429,28 +435,35 @@ class _ActionBtn extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(JuhSizes.radiusMd),
-          border: Border.all(color: JuhColors.border),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, color: color, size: JuhSizes.iconMd),
-            const SizedBox(width: 6),
-            Text(
-              label,
-              style: TextStyle(
-                color: color,
-                fontSize: JuhSizes.fontXs,
-                fontWeight: FontWeight.w600,
+    return Material(
+      color: Colors.transparent,
+      borderRadius: BorderRadius.circular(JuhSizes.radiusMd),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        splashColor: color.withValues(alpha: 0.12),
+        highlightColor: color.withValues(alpha: 0.06),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(JuhSizes.radiusMd),
+            border: Border.all(color: JuhColors.border),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(icon, color: color, size: JuhSizes.iconMd),
+              const SizedBox(width: 6),
+              Text(
+                label,
+                style: TextStyle(
+                  color: color,
+                  fontSize: JuhSizes.fontXs,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

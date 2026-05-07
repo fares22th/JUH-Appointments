@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../core/notification_service.dart';
 import '../models/appointment.dart';
 
 final appointmentsProvider =
@@ -15,6 +16,7 @@ class AppointmentsNotifier extends StateNotifier<List<Appointment>> {
     state = state
         .map((a) => a.id == id ? a.copyWith(status: ApptStatus.cancelled) : a)
         .toList();
+    NotificationService.cancelReminders(id);
   }
 
   List<Appointment> get upcoming => state

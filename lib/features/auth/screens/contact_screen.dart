@@ -108,7 +108,7 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
   }
 
   Widget _sectionLabel(String text, bool isAr) => Align(
-        alignment: isAr ? Alignment.centerRight : Alignment.centerLeft,
+        alignment: AlignmentDirectional.centerStart,
         child: Text(
           text,
           style: const TextStyle(

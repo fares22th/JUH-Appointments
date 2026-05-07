@@ -464,12 +464,12 @@ class _LeaveCard extends StatelessWidget {
                 const SizedBox(width: 10),
                 Expanded(
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // Doctor name
                       Text(
                         parsed.name,
-                        textAlign: TextAlign.right,
+                        textAlign: TextAlign.start,
                         style: const TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w700,
@@ -479,11 +479,11 @@ class _LeaveCard extends StatelessWidget {
                       if (parsed.dept != null) ...[
                         const SizedBox(height: 3),
                         Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
+                          mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             Text(
                               parsed.dept!,
-                              textAlign: TextAlign.right,
+                              textAlign: TextAlign.start,
                               style: TextStyle(
                                 fontSize: 11,
                                 color: cs.onSurfaceVariant,
@@ -598,14 +598,14 @@ class _DateCell extends StatelessWidget {
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.end,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(label, style: TextStyle(fontSize: 10, color: cs.onSurfaceVariant)),
-            const SizedBox(width: 3),
             Icon(icon, size: 11, color: color),
+            const SizedBox(width: 3),
+            Text(label, style: TextStyle(fontSize: 10, color: cs.onSurfaceVariant)),
           ],
         ),
         const SizedBox(height: 2),

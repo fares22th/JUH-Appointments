@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../../core/colors.dart';
 import '../../../core/sizes.dart';
 import '../../../providers/locale_provider.dart';
@@ -17,7 +18,7 @@ class WelcomeScreen extends ConsumerWidget {
       backgroundColor: JuhColors.primary,
       body: Column(
         children: [
-          // ── Blue hero area ──
+          // ── Hero area ──
           Expanded(
             child: SafeArea(
               bottom: false,
@@ -27,94 +28,133 @@ class WelcomeScreen extends ConsumerWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    // Top bar
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const LangToggle(light: true),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 14, vertical: 8),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withValues(alpha: 0.2),
-                            borderRadius:
-                                BorderRadius.circular(JuhSizes.radiusMd),
-                          ),
-                          child: const Text(
-                            'JUH',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w800,
-                              letterSpacing: 1,
+                    // Language toggle
+                    Align(
+                      alignment: Alignment.topLeft,
+                      child: const LangToggle(light: true),
+                    ),
+
+                    // Logo + name centered
+                    Expanded(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          // Logo
+                          Container(
+                            width: 130,
+                            height: 130,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.white.withValues(alpha: 0.1),
+                              border: Border.all(
+                                color: Colors.white.withValues(alpha: 0.3),
+                                width: 2,
+                              ),
+                            ),
+                            padding: const EdgeInsets.all(10),
+                            child: Image.asset(
+                              'assets/images/juh_logo.png',
+                              fit: BoxFit.contain,
                             ),
                           ),
-                        ),
-                      ],
-                    ),
 
-                    const Spacer(),
+                          const SizedBox(height: JuhSizes.xl),
 
-                    // Hero text
-                    Text(
-                      isAr
-                          ? 'احجز موعدك في\nدقائق معدودة'
-                          : 'Book Your Appointment\nin Minutes',
-                      textAlign: isAr ? TextAlign.right : TextAlign.left,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: JuhSizes.fontXxl,
-                        fontWeight: FontWeight.w800,
-                        height: 1.25,
+                          // Arabic name
+                          Text(
+                            'مستشفى الجامعة الأردنية',
+                            textAlign: TextAlign.center,
+                            style: GoogleFonts.reemKufi(
+                              color: Colors.white,
+                              fontSize: 26,
+                              fontWeight: FontWeight.w700,
+                              height: 1.3,
+                            ),
+                          ),
+
+                          const SizedBox(height: 8),
+
+                          // English name
+                          Text(
+                            'Jordan University Hospital',
+                            textAlign: TextAlign.center,
+                            style: GoogleFonts.reemKufi(
+                              color: Colors.white70,
+                              fontSize: JuhSizes.fontBase,
+                              fontWeight: FontWeight.w500,
+                              letterSpacing: 0.5,
+                            ),
+                          ),
+
+                          const SizedBox(height: JuhSizes.sm),
+
+                          // Divider line
+                          Container(
+                            width: 50,
+                            height: 3,
+                            decoration: BoxDecoration(
+                              color: JuhColors.accent,
+                              borderRadius: BorderRadius.circular(2),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    const SizedBox(height: JuhSizes.md),
-                    Text(
-                      isAr
-                          ? 'خدمة حجز المواعيد الإلكترونية لمستشفى الجامعة الأردنية.\nتحقق فوري عبر دائرة الأحوال المدنية.'
-                          : 'Electronic appointment booking for Jordan University Hospital.\nInstant verification via the Civil Status Department.',
-                      textAlign: isAr ? TextAlign.right : TextAlign.left,
-                      style: const TextStyle(
-                        color: Colors.white70,
-                        fontSize: JuhSizes.fontSm,
-                        height: 1.6,
-                      ),
-                    ),
-
-                    const SizedBox(height: JuhSizes.xl),
                   ],
                 ),
               ),
             ),
           ),
 
-          // ── White bottom sheet ──
+          // ── Bottom sheet ──
           Container(
             decoration: const BoxDecoration(
               color: JuhColors.bg,
-              borderRadius:
-                  BorderRadius.vertical(top: Radius.circular(JuhSizes.radiusXl)),
+              borderRadius: BorderRadius.vertical(
+                  top: Radius.circular(JuhSizes.radiusXl)),
             ),
             child: SafeArea(
               top: false,
               child: Padding(
-                padding:
-                    const EdgeInsets.fromLTRB(JuhSizes.md, 28, JuhSizes.md, JuhSizes.md),
+                padding: const EdgeInsets.fromLTRB(
+                    JuhSizes.md, 32, JuhSizes.md, JuhSizes.lg),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    // Primary CTA
+                    // Welcome text
+                    Text(
+                      isAr ? 'مرحباً بك' : 'Welcome',
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontSize: JuhSizes.fontLg,
+                        fontWeight: FontWeight.w800,
+                        color: JuhColors.textPrimary,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      isAr
+                          ? 'سجّل دخولك أو أنشئ حساباً للبدء'
+                          : 'Sign in or create an account to get started',
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontSize: JuhSizes.fontSm,
+                        color: JuhColors.textSecondary,
+                      ),
+                    ),
+
+                    const SizedBox(height: JuhSizes.xl),
+
+                    // Sign In — primary
                     SizedBox(
                       height: JuhSizes.btnHeight,
                       child: ElevatedButton.icon(
-                        onPressed: () => context.push('/signup'),
-                        icon: const Icon(Icons.badge_outlined, size: 20),
-                        label: Text(
-                          isAr ? 'إنشاء حساب جديد' : 'Create Account',
-                        ),
+                        onPressed: () => context.push('/login'),
+                        icon: const Icon(Icons.login_outlined, size: 20),
+                        label: Text(isAr ? 'تسجيل الدخول' : 'Sign In'),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: JuhColors.primaryInk,
+                          backgroundColor: JuhColors.primary,
                           foregroundColor: Colors.white,
                           shape: RoundedRectangleBorder(
                             borderRadius:
@@ -127,17 +167,21 @@ class WelcomeScreen extends ConsumerWidget {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 10),
 
-                    // Login
+                    const SizedBox(height: 12),
+
+                    // Create Account — secondary
                     SizedBox(
                       height: JuhSizes.btnHeight,
-                      child: OutlinedButton(
-                        onPressed: () => context.push('/login'),
+                      child: OutlinedButton.icon(
+                        onPressed: () => context.push('/signup'),
+                        icon: const Icon(Icons.badge_outlined, size: 20),
+                        label: Text(
+                            isAr ? 'إنشاء حساب جديد' : 'Create Account'),
                         style: OutlinedButton.styleFrom(
                           foregroundColor: JuhColors.primary,
                           side: const BorderSide(
-                              color: JuhColors.border, width: 1.5),
+                              color: JuhColors.primary, width: 1.5),
                           shape: RoundedRectangleBorder(
                             borderRadius:
                                 BorderRadius.circular(JuhSizes.radiusMd),
@@ -147,76 +191,6 @@ class WelcomeScreen extends ConsumerWidget {
                             fontWeight: FontWeight.w600,
                           ),
                         ),
-                        child: Text(isAr ? 'تسجيل الدخول' : 'Sign In'),
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-
-                    // Features card
-                    Container(
-                      padding: const EdgeInsets.all(JuhSizes.md),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius:
-                            BorderRadius.circular(JuhSizes.radiusLg),
-                        border: Border.all(color: JuhColors.border),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Text(
-                            isAr ? 'ما يميز المنصة' : 'Why Choose Us',
-                            textAlign:
-                                isAr ? TextAlign.right : TextAlign.left,
-                            style: const TextStyle(
-                              fontSize: JuhSizes.fontBase,
-                              fontWeight: FontWeight.w700,
-                              color: JuhColors.textPrimary,
-                            ),
-                          ),
-                          const SizedBox(height: JuhSizes.md),
-                          ...[
-                            (Icons.verified_user_outlined,
-                                isAr
-                                    ? 'تحقق آمن من الهوية'
-                                    : 'Secure Identity Verification'),
-                            (Icons.timer_outlined,
-                                isAr
-                                    ? 'حجز خلال 60 ثانية'
-                                    : 'Book in 60 Seconds'),
-                            (Icons.notifications_outlined,
-                                isAr
-                                    ? 'تذكير قبل الموعد بيوم'
-                                    : 'Reminder 1 Day Before'),
-                            (Icons.group_outlined,
-                                isAr
-                                    ? 'إدارة مواعيد العائلة'
-                                    : 'Manage Family Appointments'),
-                          ].map(
-                            (item) => Padding(
-                              padding: const EdgeInsets.only(bottom: JuhSizes.md),
-                              child: Row(
-                                textDirection:
-                                    isAr ? TextDirection.rtl : TextDirection.ltr,
-                                children: [
-                                  Icon(item.$1,
-                                      color: JuhColors.primary, size: 20),
-                                  const SizedBox(width: 12),
-                                  Expanded(
-                                    child: Text(
-                                      item.$2,
-                                      style: const TextStyle(
-                                        fontSize: JuhSizes.fontSm,
-                                        fontWeight: FontWeight.w500,
-                                        color: JuhColors.textPrimary,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
                       ),
                     ),
                   ],

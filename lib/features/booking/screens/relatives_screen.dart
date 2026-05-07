@@ -64,7 +64,7 @@ class RelativesScreen extends ConsumerWidget {
                   const SizedBox(height: JuhSizes.lg),
                   Align(
                     alignment:
-                        isAr ? Alignment.centerRight : Alignment.centerLeft,
+                        AlignmentDirectional.centerStart,
                     child: Text(
                       isAr ? 'الأقارب' : 'Relatives',
                       style: const TextStyle(
@@ -496,83 +496,89 @@ class _SelectablePatientCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 150),
-        padding: const EdgeInsets.all(JuhSizes.md),
-        decoration: BoxDecoration(
-          color: selected ? JuhColors.primarySoft : JuhColors.surface,
-          borderRadius: BorderRadius.circular(JuhSizes.radiusLg),
-          border: Border.all(
-            color: selected ? JuhColors.primary : JuhColors.border,
-            width: selected ? 1.5 : 1,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.04),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
+    return Material(
+      color: Colors.transparent,
+      borderRadius: BorderRadius.circular(JuhSizes.radiusLg),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        splashColor: JuhColors.primary.withValues(alpha: 0.10),
+        highlightColor: JuhColors.primary.withValues(alpha: 0.05),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 150),
+          padding: const EdgeInsets.all(JuhSizes.md),
+          decoration: BoxDecoration(
+            color: selected ? JuhColors.primarySoft : JuhColors.surface,
+            borderRadius: BorderRadius.circular(JuhSizes.radiusLg),
+            border: Border.all(
+              color: selected ? JuhColors.primary : JuhColors.border,
+              width: selected ? 1.5 : 1,
             ),
-          ],
-        ),
-        child: Row(
-          textDirection: isAr ? TextDirection.rtl : TextDirection.ltr,
-          children: [
-            Container(
-              width: 44,
-              height: 44,
-              decoration: BoxDecoration(
-                color: selected ? JuhColors.primary : JuhColors.primarySoft,
-                shape: BoxShape.circle,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.04),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
               ),
-              child: Center(
-                child: Text(
-                  name.isNotEmpty ? name[0] : '?',
-                  style: TextStyle(
-                    color: selected ? Colors.white : JuhColors.primary,
-                    fontWeight: FontWeight.w700,
-                    fontSize: JuhSizes.fontMd,
+            ],
+          ),
+          child: Row(
+            textDirection: isAr ? TextDirection.rtl : TextDirection.ltr,
+            children: [
+              Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  color: selected ? JuhColors.primary : JuhColors.primarySoft,
+                  shape: BoxShape.circle,
+                ),
+                child: Center(
+                  child: Text(
+                    name.isNotEmpty ? name[0] : '?',
+                    style: TextStyle(
+                      color: selected ? Colors.white : JuhColors.primary,
+                      fontWeight: FontWeight.w700,
+                      fontSize: JuhSizes.fontMd,
+                    ),
                   ),
                 ),
               ),
-            ),
-            const SizedBox(width: JuhSizes.md),
-            Expanded(
-              child: Column(
-                crossAxisAlignment:
-                    isAr ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    name,
-                    style: TextStyle(
-                      fontSize: JuhSizes.fontBase,
-                      fontWeight: FontWeight.w700,
-                      color: selected
-                          ? JuhColors.primaryInk
-                          : JuhColors.textPrimary,
+              const SizedBox(width: JuhSizes.md),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      name,
+                      style: TextStyle(
+                        fontSize: JuhSizes.fontBase,
+                        fontWeight: FontWeight.w700,
+                        color: selected
+                            ? JuhColors.primaryInk
+                            : JuhColors.textPrimary,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    subtitle,
-                    style: const TextStyle(
-                      fontSize: JuhSizes.fontXs,
-                      color: JuhColors.textSecondary,
+                    const SizedBox(height: 2),
+                    Text(
+                      subtitle,
+                      style: const TextStyle(
+                        fontSize: JuhSizes.fontXs,
+                        color: JuhColors.textSecondary,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-            const SizedBox(width: JuhSizes.sm),
-            Icon(
-              selected
-                  ? Icons.check_circle_rounded
-                  : Icons.radio_button_unchecked,
-              color: selected ? JuhColors.primary : JuhColors.border,
-              size: JuhSizes.iconLg,
-            ),
-          ],
+              const SizedBox(width: JuhSizes.sm),
+              Icon(
+                selected
+                    ? Icons.check_circle_rounded
+                    : Icons.radio_button_unchecked,
+                color: selected ? JuhColors.primary : JuhColors.border,
+                size: JuhSizes.iconLg,
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -598,70 +604,76 @@ class _InsuranceTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 150),
-        padding: const EdgeInsets.symmetric(
-            horizontal: JuhSizes.md, vertical: 14),
-        decoration: BoxDecoration(
-          color: selected ? JuhColors.primarySoft : JuhColors.surface,
-          borderRadius: BorderRadius.circular(JuhSizes.radiusLg),
-          border: Border.all(
-            color: selected ? JuhColors.primary : JuhColors.border,
-            width: selected ? 1.5 : 1,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.04),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Row(
-          textDirection: isAr ? TextDirection.rtl : TextDirection.ltr,
-          children: [
-            Container(
-              width: 44,
-              height: 44,
-              decoration: BoxDecoration(
-                color: selected
-                    ? JuhColors.primary.withValues(alpha: 0.12)
-                    : JuhColors.bg,
-                borderRadius: BorderRadius.circular(JuhSizes.radiusMd),
-                border: Border.all(
-                  color: selected
-                      ? JuhColors.primary.withValues(alpha: 0.3)
-                      : JuhColors.border,
-                ),
-              ),
-              child: Center(
-                child:
-                    Text(icon, style: const TextStyle(fontSize: 22)),
-              ),
-            ),
-            const SizedBox(width: JuhSizes.md),
-            Expanded(
-              child: Text(
-                title,
-                style: TextStyle(
-                  fontSize: JuhSizes.fontBase,
-                  fontWeight: FontWeight.w600,
-                  color: selected
-                      ? JuhColors.primaryInk
-                      : JuhColors.textPrimary,
-                ),
-              ),
-            ),
-            Icon(
-              selected
-                  ? Icons.check_circle_rounded
-                  : Icons.radio_button_unchecked,
+    return Material(
+      color: Colors.transparent,
+      borderRadius: BorderRadius.circular(JuhSizes.radiusLg),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        splashColor: JuhColors.primary.withValues(alpha: 0.10),
+        highlightColor: JuhColors.primary.withValues(alpha: 0.05),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 150),
+          padding: const EdgeInsets.symmetric(
+              horizontal: JuhSizes.md, vertical: 14),
+          decoration: BoxDecoration(
+            color: selected ? JuhColors.primarySoft : JuhColors.surface,
+            borderRadius: BorderRadius.circular(JuhSizes.radiusLg),
+            border: Border.all(
               color: selected ? JuhColors.primary : JuhColors.border,
-              size: JuhSizes.iconLg,
+              width: selected ? 1.5 : 1,
             ),
-          ],
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.04),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: Row(
+            textDirection: isAr ? TextDirection.rtl : TextDirection.ltr,
+            children: [
+              Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  color: selected
+                      ? JuhColors.primary.withValues(alpha: 0.12)
+                      : JuhColors.bg,
+                  borderRadius: BorderRadius.circular(JuhSizes.radiusMd),
+                  border: Border.all(
+                    color: selected
+                        ? JuhColors.primary.withValues(alpha: 0.3)
+                        : JuhColors.border,
+                  ),
+                ),
+                child: Center(
+                  child: Text(icon, style: const TextStyle(fontSize: 22)),
+                ),
+              ),
+              const SizedBox(width: JuhSizes.md),
+              Expanded(
+                child: Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: JuhSizes.fontBase,
+                    fontWeight: FontWeight.w600,
+                    color: selected
+                        ? JuhColors.primaryInk
+                        : JuhColors.textPrimary,
+                  ),
+                ),
+              ),
+              Icon(
+                selected
+                    ? Icons.check_circle_rounded
+                    : Icons.radio_button_unchecked,
+                color: selected ? JuhColors.primary : JuhColors.border,
+                size: JuhSizes.iconLg,
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -728,66 +740,72 @@ class _PersonCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(JuhSizes.md),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(JuhSizes.radiusLg),
-          border: Border.all(color: JuhColors.border),
-        ),
-        child: Row(
-          textDirection: isAr ? TextDirection.rtl : TextDirection.ltr,
-          children: [
-            Container(
-              width: 44,
-              height: 44,
-              decoration: const BoxDecoration(
-                color: JuhColors.primarySoft,
-                shape: BoxShape.circle,
-              ),
-              child: Center(
-                child: Text(
-                  avatarLetter,
-                  style: const TextStyle(
-                    color: JuhColors.primary,
-                    fontWeight: FontWeight.w700,
-                    fontSize: JuhSizes.fontMd,
+    return Material(
+      color: Colors.transparent,
+      borderRadius: BorderRadius.circular(JuhSizes.radiusLg),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        splashColor: JuhColors.primary.withValues(alpha: 0.10),
+        highlightColor: JuhColors.primary.withValues(alpha: 0.05),
+        child: Container(
+          padding: const EdgeInsets.all(JuhSizes.md),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(JuhSizes.radiusLg),
+            border: Border.all(color: JuhColors.border),
+          ),
+          child: Row(
+            textDirection: isAr ? TextDirection.rtl : TextDirection.ltr,
+            children: [
+              Container(
+                width: 44,
+                height: 44,
+                decoration: const BoxDecoration(
+                  color: JuhColors.primarySoft,
+                  shape: BoxShape.circle,
+                ),
+                child: Center(
+                  child: Text(
+                    avatarLetter,
+                    style: const TextStyle(
+                      color: JuhColors.primary,
+                      fontWeight: FontWeight.w700,
+                      fontSize: JuhSizes.fontMd,
+                    ),
                   ),
                 ),
               ),
-            ),
-            const SizedBox(width: JuhSizes.md),
-            Expanded(
-              child: Column(
-                crossAxisAlignment:
-                    isAr ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    name,
-                    style: const TextStyle(
-                      fontSize: JuhSizes.fontBase,
-                      fontWeight: FontWeight.w700,
-                      color: JuhColors.textPrimary,
+              const SizedBox(width: JuhSizes.md),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      name,
+                      style: const TextStyle(
+                        fontSize: JuhSizes.fontBase,
+                        fontWeight: FontWeight.w700,
+                        color: JuhColors.textPrimary,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    subtitle,
-                    style: const TextStyle(
-                      fontSize: JuhSizes.fontXs,
-                      color: JuhColors.textSecondary,
+                    const SizedBox(height: 2),
+                    Text(
+                      subtitle,
+                      style: const TextStyle(
+                        fontSize: JuhSizes.fontXs,
+                        color: JuhColors.textSecondary,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-            Icon(
-              isAr ? Icons.chevron_left : Icons.chevron_right,
-              color: JuhColors.textSecondary,
-            ),
-          ],
+              Icon(
+                isAr ? Icons.chevron_left : Icons.chevron_right,
+                color: JuhColors.textSecondary,
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -802,37 +820,44 @@ class _AddRelativeRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {},
-      child: Container(
-        padding: const EdgeInsets.all(JuhSizes.md),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(JuhSizes.radiusLg),
-          border: Border.all(color: JuhColors.border),
-        ),
-        child: Row(
-          textDirection: isAr ? TextDirection.rtl : TextDirection.ltr,
-          children: [
-            Container(
-              width: 44,
-              height: 44,
-              decoration: BoxDecoration(
-                color: JuhColors.primarySoft,
-                borderRadius: BorderRadius.circular(JuhSizes.radiusMd),
+    return Material(
+      color: Colors.transparent,
+      borderRadius: BorderRadius.circular(JuhSizes.radiusLg),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: () {},
+        splashColor: JuhColors.primary.withValues(alpha: 0.10),
+        highlightColor: JuhColors.primary.withValues(alpha: 0.05),
+        child: Container(
+          padding: const EdgeInsets.all(JuhSizes.md),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(JuhSizes.radiusLg),
+            border: Border.all(color: JuhColors.border),
+          ),
+          child: Row(
+            textDirection: isAr ? TextDirection.rtl : TextDirection.ltr,
+            children: [
+              Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  color: JuhColors.primarySoft,
+                  borderRadius: BorderRadius.circular(JuhSizes.radiusMd),
+                ),
+                child: const Icon(Icons.add, color: JuhColors.primary),
               ),
-              child: const Icon(Icons.add, color: JuhColors.primary),
-            ),
-            const SizedBox(width: JuhSizes.md),
-            Text(
-              isAr ? 'إضافة قريب جديد' : 'Add New Relative',
-              style: const TextStyle(
-                fontSize: JuhSizes.fontBase,
-                fontWeight: FontWeight.w600,
-                color: JuhColors.primary,
+              const SizedBox(width: JuhSizes.md),
+              Text(
+                isAr ? 'إضافة قريب جديد' : 'Add New Relative',
+                style: const TextStyle(
+                  fontSize: JuhSizes.fontBase,
+                  fontWeight: FontWeight.w600,
+                  color: JuhColors.primary,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

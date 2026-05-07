@@ -88,7 +88,7 @@ class _BookingChooseScreenState extends ConsumerState<BookingChooseScreen> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: JuhSizes.md),
             child: Align(
-              alignment: isAr ? Alignment.centerRight : Alignment.centerLeft,
+              alignment: AlignmentDirectional.centerStart,
               child: Text(
                 stepTitles[_step],
                 style: const TextStyle(
@@ -352,55 +352,61 @@ class _SelectTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 150),
-        padding: const EdgeInsets.all(JuhSizes.md),
-        decoration: BoxDecoration(
-          color: isSelected ? JuhColors.primarySoft : Colors.white,
-          borderRadius: BorderRadius.circular(JuhSizes.radiusLg),
-          border: Border.all(
-              color: isSelected ? JuhColors.primary : JuhColors.border,
-              width: isSelected ? 1.5 : 1),
-        ),
-        child: Row(
-          textDirection: isAr ? TextDirection.rtl : TextDirection.ltr,
-          children: [
-            leading,
-            const SizedBox(width: JuhSizes.md),
-            Expanded(
-              child: Column(
-                crossAxisAlignment:
-                    isAr ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: TextStyle(
-                      fontSize: JuhSizes.fontBase,
-                      fontWeight: FontWeight.w600,
-                      color: isSelected
-                          ? JuhColors.primaryInk
-                          : JuhColors.textPrimary,
-                    ),
-                  ),
-                  if (subtitle != null) ...[
-                    const SizedBox(height: 2),
+    return Material(
+      color: Colors.transparent,
+      borderRadius: BorderRadius.circular(JuhSizes.radiusLg),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        splashColor: JuhColors.primary.withValues(alpha: 0.10),
+        highlightColor: JuhColors.primary.withValues(alpha: 0.05),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 150),
+          padding: const EdgeInsets.all(JuhSizes.md),
+          decoration: BoxDecoration(
+            color: isSelected ? JuhColors.primarySoft : Colors.white,
+            borderRadius: BorderRadius.circular(JuhSizes.radiusLg),
+            border: Border.all(
+                color: isSelected ? JuhColors.primary : JuhColors.border,
+                width: isSelected ? 1.5 : 1),
+          ),
+          child: Row(
+            textDirection: isAr ? TextDirection.rtl : TextDirection.ltr,
+            children: [
+              leading,
+              const SizedBox(width: JuhSizes.md),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
                     Text(
-                      subtitle!,
-                      style: const TextStyle(
-                        fontSize: JuhSizes.fontXs,
-                        color: JuhColors.textSecondary,
+                      title,
+                      style: TextStyle(
+                        fontSize: JuhSizes.fontBase,
+                        fontWeight: FontWeight.w600,
+                        color: isSelected
+                            ? JuhColors.primaryInk
+                            : JuhColors.textPrimary,
                       ),
                     ),
+                    if (subtitle != null) ...[
+                      const SizedBox(height: 2),
+                      Text(
+                        subtitle!,
+                        style: const TextStyle(
+                          fontSize: JuhSizes.fontXs,
+                          color: JuhColors.textSecondary,
+                        ),
+                      ),
+                    ],
                   ],
-                ],
+                ),
               ),
-            ),
-            if (isSelected)
-              const Icon(Icons.check_circle,
-                  color: JuhColors.primary, size: JuhSizes.iconLg),
-          ],
+              if (isSelected)
+                const Icon(Icons.check_circle,
+                    color: JuhColors.primary, size: JuhSizes.iconLg),
+            ],
+          ),
         ),
       ),
     );
@@ -423,21 +429,27 @@ class _DoctorTile extends StatelessWidget {
     final nameDisplay = isAr ? doc.nameAr : doc.nameEn;
     final initial = nameDisplay.replaceAll('د. ', '').replaceAll('Dr. ', '')[0];
 
-    return GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 150),
-        padding: const EdgeInsets.all(JuhSizes.md),
-        decoration: BoxDecoration(
-          color: isSelected ? JuhColors.primarySoft : Colors.white,
-          borderRadius: BorderRadius.circular(JuhSizes.radiusLg),
-          border: Border.all(
-              color: isSelected ? JuhColors.primary : JuhColors.border,
-              width: isSelected ? 1.5 : 1),
-        ),
-        child: Row(
-          textDirection: isAr ? TextDirection.rtl : TextDirection.ltr,
-          children: [
+    return Material(
+      color: Colors.transparent,
+      borderRadius: BorderRadius.circular(JuhSizes.radiusLg),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        splashColor: JuhColors.primary.withValues(alpha: 0.10),
+        highlightColor: JuhColors.primary.withValues(alpha: 0.05),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 150),
+          padding: const EdgeInsets.all(JuhSizes.md),
+          decoration: BoxDecoration(
+            color: isSelected ? JuhColors.primarySoft : Colors.white,
+            borderRadius: BorderRadius.circular(JuhSizes.radiusLg),
+            border: Border.all(
+                color: isSelected ? JuhColors.primary : JuhColors.border,
+                width: isSelected ? 1.5 : 1),
+          ),
+          child: Row(
+            textDirection: isAr ? TextDirection.rtl : TextDirection.ltr,
+            children: [
             CircleAvatar(
               backgroundColor:
                   isSelected ? JuhColors.primary : JuhColors.primarySoft,
@@ -455,7 +467,7 @@ class _DoctorTile extends StatelessWidget {
             Expanded(
               child: Column(
                 crossAxisAlignment:
-                    isAr ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+                    CrossAxisAlignment.start,
                 children: [
                   Text(
                     nameDisplay,
@@ -507,6 +519,7 @@ class _DoctorTile extends StatelessWidget {
                   color: JuhColors.primary, size: JuhSizes.iconLg),
             ],
           ],
+          ),
         ),
       ),
     );

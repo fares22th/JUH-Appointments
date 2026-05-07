@@ -130,48 +130,59 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                     const SizedBox(height: JuhSizes.lg),
 
                     // Terms checkbox
-                    GestureDetector(
-                      onTap: () => setState(() => _agreed = !_agreed),
-                      child: Row(
-                        textDirection:
-                            isAr ? TextDirection.rtl : TextDirection.ltr,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            width: 22,
-                            height: 22,
-                            decoration: BoxDecoration(
-                              color: _agreed ? JuhColors.primary : Colors.white,
-                              borderRadius:
-                                  BorderRadius.circular(JuhSizes.radiusSm),
-                              border: Border.all(
-                                color: _agreed
-                                    ? JuhColors.primary
-                                    : JuhColors.border,
-                                width: 1.5,
+                    Material(
+                      color: Colors.transparent,
+                      borderRadius: BorderRadius.circular(JuhSizes.radiusSm),
+                      clipBehavior: Clip.antiAlias,
+                      child: InkWell(
+                        onTap: () => setState(() => _agreed = !_agreed),
+                        splashColor: JuhColors.primary.withValues(alpha: 0.10),
+                        highlightColor: JuhColors.primary.withValues(alpha: 0.05),
+                        borderRadius: BorderRadius.circular(JuhSizes.radiusSm),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 4),
+                          child: Row(
+                            textDirection:
+                                isAr ? TextDirection.rtl : TextDirection.ltr,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                width: 22,
+                                height: 22,
+                                decoration: BoxDecoration(
+                                  color: _agreed ? JuhColors.primary : Colors.white,
+                                  borderRadius:
+                                      BorderRadius.circular(JuhSizes.radiusSm),
+                                  border: Border.all(
+                                    color: _agreed
+                                        ? JuhColors.primary
+                                        : JuhColors.border,
+                                    width: 1.5,
+                                  ),
+                                ),
+                                child: _agreed
+                                    ? const Icon(Icons.check,
+                                        color: Colors.white, size: 14)
+                                    : null,
                               ),
-                            ),
-                            child: _agreed
-                                ? const Icon(Icons.check,
-                                    color: Colors.white, size: 14)
-                                : null,
-                          ),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: Text(
-                              isAr
-                                  ? 'أوافق على الشروط والأحكام وسياسة الخصوصية الخاصة بمستشفى الجامعة الأردنية.'
-                                  : 'I agree to the Terms and Conditions and Privacy Policy of Jordan University Hospital.',
-                              textAlign:
-                                  isAr ? TextAlign.right : TextAlign.left,
-                              style: const TextStyle(
-                                fontSize: JuhSizes.fontSm,
-                                color: JuhColors.textPrimary,
-                                height: 1.5,
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: Text(
+                                  isAr
+                                      ? 'أوافق على الشروط والأحكام وسياسة الخصوصية الخاصة بمستشفى الجامعة الأردنية.'
+                                      : 'I agree to the Terms and Conditions and Privacy Policy of Jordan University Hospital.',
+                                  textAlign:
+                                      isAr ? TextAlign.right : TextAlign.left,
+                                  style: const TextStyle(
+                                    fontSize: JuhSizes.fontSm,
+                                    color: JuhColors.textPrimary,
+                                    height: 1.5,
+                                  ),
+                                ),
                               ),
-                            ),
+                            ],
                           ),
-                        ],
+                        ),
                       ),
                     ),
                   ],

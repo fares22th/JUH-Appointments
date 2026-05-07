@@ -13,9 +13,17 @@ class LangToggle extends ConsumerWidget {
     final locale = ref.watch(localeProvider);
     final isAr = locale.languageCode == 'ar';
 
-    return GestureDetector(
-      onTap: () => ref.read(localeProvider.notifier).toggle(),
-      child: Container(
+    return Material(
+      color: Colors.transparent,
+      borderRadius: BorderRadius.circular(JuhSizes.radiusFull),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: () => ref.read(localeProvider.notifier).toggle(),
+        splashColor: light
+            ? Colors.white.withValues(alpha: 0.25)
+            : JuhColors.primary.withValues(alpha: 0.15),
+        highlightColor: Colors.transparent,
+        child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
         decoration: BoxDecoration(
           color: light
@@ -59,6 +67,7 @@ class LangToggle extends ConsumerWidget {
               ),
             ),
           ],
+        ),
         ),
       ),
     );

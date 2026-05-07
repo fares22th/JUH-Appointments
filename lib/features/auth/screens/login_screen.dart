@@ -7,7 +7,7 @@ import '../../../core/nhost.dart';
 import '../../../core/sizes.dart';
 import '../../../providers/locale_provider.dart';
 import '../../../shared/widgets/app_button.dart';
-import '../../../shared/widgets/form_widgets.dart';
+import '../../../shared/widgets/form_widgets.dart' show FieldLabel, JuhFormField;
 import '../../../shared/widgets/screen_header.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
@@ -97,11 +97,42 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   children: [
                     const SizedBox(height: JuhSizes.md),
 
-                    InfoBanner(
-                      icon: Icons.badge_outlined,
-                      text: isAr
-                          ? 'أدخل رقمك الوطني وكلمة المرور التي أنشأتها عند التسجيل.'
-                          : 'Enter your National ID and the password you created during registration.',
+                    // Notice box — matches JUH platform
+                    Container(
+                      padding: const EdgeInsets.all(JuhSizes.md),
+                      decoration: BoxDecoration(
+                        color: JuhColors.primary,
+                        borderRadius: BorderRadius.circular(JuhSizes.radiusMd),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Text(
+                            isAr
+                                ? 'يُفضَّل استخدام رقم وثيقة الهوية الشخصية بدلاً من رقم القيد، للكبار الذين لديهم هوية شخصية، وذلك لأن رقم القيد يتغير بتغيير الحالة الاجتماعية مثل الزواج.'
+                                : 'It is preferred to use the Personal ID number instead of the registration number for adults who have a personal ID, as the registration number changes with changes in civil status such as marriage.',
+                            textAlign: isAr ? TextAlign.right : TextAlign.left,
+                            style: const TextStyle(
+                              color: Color(0xFFFFD54F),
+                              fontSize: JuhSizes.fontSm,
+                              height: 1.6,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          const SizedBox(height: JuhSizes.sm),
+                          Text(
+                            isAr
+                                ? 'الذين لا يوجد لديهم هوية شخصية يمكنهم استخدام رقم القيد للدخول.'
+                                : 'Those without a personal ID can use their registration number to log in.',
+                            textAlign: isAr ? TextAlign.right : TextAlign.left,
+                            style: const TextStyle(
+                              color: Colors.white70,
+                              fontSize: JuhSizes.fontSm,
+                              height: 1.6,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                     const SizedBox(height: JuhSizes.lg),
 
@@ -186,19 +217,22 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     const SizedBox(height: JuhSizes.lg),
 
                     Align(
-                      alignment: isAr
-                          ? Alignment.centerRight
-                          : Alignment.centerLeft,
-                      child: GestureDetector(
+                      alignment: AlignmentDirectional.centerStart,
+                      child: InkWell(
                         onTap: () => context.push('/signup'),
-                        child: Text(
-                          isAr
-                              ? 'ليس لديك حساب؟ إنشاء حساب جديد'
-                              : 'No account? Create one',
-                          style: const TextStyle(
-                            fontSize: JuhSizes.fontSm,
-                            color: JuhColors.primary,
-                            fontWeight: FontWeight.w600,
+                        borderRadius: BorderRadius.circular(JuhSizes.radiusSm),
+                        splashColor: JuhColors.primary.withValues(alpha: 0.15),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                          child: Text(
+                            isAr
+                                ? 'ليس لديك حساب؟ إنشاء حساب جديد'
+                                : 'No account? Create one',
+                            style: const TextStyle(
+                              fontSize: JuhSizes.fontSm,
+                              color: JuhColors.primary,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                         ),
                       ),

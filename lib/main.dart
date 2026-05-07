@@ -4,12 +4,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'app.dart';
 import 'core/nhost.dart';
+import 'core/notification_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await initializeDateFormatting('ar');
   await initializeDateFormatting('en');
+
+  await NotificationService.init();
 
   try {
     await nhostClient.auth.signInWithStoredCredentials();
