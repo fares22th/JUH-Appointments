@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart' hide TextDirection;
 import 'package:uuid/uuid.dart';
 import '../../../core/colors.dart';
+import '../../../core/extensions.dart';
 import '../../../core/notification_service.dart';
 import '../../../core/sizes.dart';
 import '../../../data/seed_data.dart';
@@ -158,7 +159,7 @@ class _ConfirmScreenState extends ConsumerState<ConfirmScreen> {
     ];
 
     return Scaffold(
-      backgroundColor: JuhColors.bg,
+      backgroundColor: context.juhBg,
       appBar: const ScreenHeader(
           titleAr: 'مراجعة وتأكيد', titleEn: 'Review & Confirm'),
       body: SingleChildScrollView(
@@ -177,6 +178,8 @@ class _ConfirmScreenState extends ConsumerState<ConfirmScreen> {
                     color: JuhColors.info.withValues(alpha: 0.3)),
               ),
               child: Row(
+                textDirection:
+                    isAr ? TextDirection.rtl : TextDirection.ltr,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Icon(Icons.notifications_active_outlined,
@@ -231,9 +234,9 @@ class _SummaryCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.juhSurface,
         borderRadius: BorderRadius.circular(JuhSizes.radiusLg),
-        border: Border.all(color: JuhColors.border),
+        border: Border.all(color: context.juhBorder),
       ),
       child: Column(
         children: rows.asMap().entries.map((e) {
@@ -250,9 +253,9 @@ class _SummaryCard extends StatelessWidget {
                   children: [
                     Text(
                       row.$1,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: JuhSizes.fontSm,
-                        color: JuhColors.textSecondary,
+                        color: context.juhTextSub,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -260,10 +263,10 @@ class _SummaryCard extends StatelessWidget {
                     Flexible(
                       child: Text(
                         row.$2,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: JuhSizes.fontSm,
                           fontWeight: FontWeight.w700,
-                          color: JuhColors.textPrimary,
+                          color: context.juhText,
                         ),
                         textAlign:
                             isAr ? TextAlign.left : TextAlign.right,
@@ -273,7 +276,7 @@ class _SummaryCard extends StatelessWidget {
                 ),
               ),
               if (i < rows.length - 1)
-                const Divider(height: 1, color: JuhColors.border),
+                Divider(height: 1, color: context.juhBorder),
             ],
           );
         }).toList(),
@@ -294,7 +297,7 @@ class _SuccessView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: JuhColors.bg,
+      backgroundColor: context.juhBg,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(JuhSizes.md),
@@ -307,8 +310,8 @@ class _SuccessView extends StatelessWidget {
                 child: Container(
                   width: 100,
                   height: 100,
-                  decoration: const BoxDecoration(
-                      color: JuhColors.successSoft,
+                  decoration: BoxDecoration(
+                      color: context.juhSuccessSoft,
                       shape: BoxShape.circle),
                   child: const Icon(Icons.check_circle_outline,
                       color: JuhColors.success, size: 56),
@@ -317,10 +320,10 @@ class _SuccessView extends StatelessWidget {
               const SizedBox(height: JuhSizes.lg),
               Text(
                 isAr ? 'تم تأكيد حجزك!' : 'Booking Confirmed!',
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: JuhSizes.fontXl,
                   fontWeight: FontWeight.w800,
-                  color: JuhColors.textPrimary,
+                  color: context.juhText,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -329,9 +332,9 @@ class _SuccessView extends StatelessWidget {
                 isAr
                     ? 'سيصلك تأكيد على بريدك الإلكتروني'
                     : 'A confirmation has been sent to your email',
-                style: const TextStyle(
+                style: TextStyle(
                     fontSize: JuhSizes.fontSm,
-                    color: JuhColors.textSecondary),
+                    color: context.juhTextSub),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: JuhSizes.lg),
@@ -339,7 +342,7 @@ class _SuccessView extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(JuhSizes.md),
                 decoration: BoxDecoration(
-                  color: JuhColors.primarySoft,
+                  color: context.juhPrimarySoft,
                   borderRadius:
                       BorderRadius.circular(JuhSizes.radiusLg),
                 ),

@@ -12,7 +12,9 @@ void main() async {
   await initializeDateFormatting('ar');
   await initializeDateFormatting('en');
 
-  await NotificationService.init();
+  try {
+    await NotificationService.init();
+  } catch (_) {}
 
   try {
     await nhostClient.auth.signInWithStoredCredentials();

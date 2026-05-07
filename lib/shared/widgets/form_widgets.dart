@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../core/colors.dart';
+import '../../core/extensions.dart';
 import '../../core/sizes.dart';
 
 /// Segmented horizontal progress bar for multi-step flows.
@@ -21,7 +22,7 @@ class SegmentBar extends StatelessWidget {
               ? JuhColors.success
               : idx == step
                   ? JuhColors.primary
-                  : JuhColors.border;
+                  : context.juhBorder;
           return Expanded(
             child: Container(
               height: 3,
@@ -50,7 +51,7 @@ class InfoBanner extends StatelessWidget {
       padding:
           const EdgeInsets.symmetric(horizontal: JuhSizes.md, vertical: 12),
       decoration: BoxDecoration(
-        color: JuhColors.primarySoft,
+        color: context.juhPrimarySoft,
         borderRadius: BorderRadius.circular(JuhSizes.radiusMd),
         border: Border.all(color: JuhColors.primary.withValues(alpha: 0.2)),
       ),
@@ -64,9 +65,9 @@ class InfoBanner extends StatelessWidget {
             child: Text(
               text,
               textAlign: isAr ? TextAlign.right : TextAlign.left,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: JuhSizes.fontSm,
-                color: JuhColors.primaryInk,
+                color: context.juhText,
                 height: 1.5,
               ),
             ),

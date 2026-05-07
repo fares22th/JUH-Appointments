@@ -65,11 +65,19 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             : (isAr ? 'تعذّر تسجيل الدخول.' : 'Sign in failed.');
       }
       setState(() => _errorMsg = msg);
-    } catch (_) {
+    } catch (e) {
       final isAr = ref.read(localeProvider).languageCode == 'ar';
-      setState(() => _errorMsg = isAr
-          ? 'حدث خطأ. تحقق من الاتصال وأعد المحاولة.'
-          : 'An error occurred. Check your connection and try again.');
+      final detail = e.toString();
+      final isNetwork = detail.toLowerCase().contains('socket') ||
+          detail.toLowerCase().contains('connection') ||
+          detail.toLowerCase().contains('host lookup') ||
+          detail.toLowerCase().contains('network') ||
+          detail.toLowerCase().contains('handshake');
+      setState(() => _errorMsg = isNetwork
+          ? (isAr
+              ? 'لا يمكن الاتصال بالخادم. تأكد من اتصال الإنترنت وأعد المحاولة.'
+              : 'Cannot connect to server. Check your internet connection and try again.')
+          : '${e.runtimeType}: $detail');
     } finally {
       if (mounted) setState(() => _loading = false);
     }

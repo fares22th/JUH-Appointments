@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart' hide TextDirection;
 import '../../../core/colors.dart';
+import '../../../core/extensions.dart';
 import '../../../core/sizes.dart';
 import '../../../models/appointment.dart';
 import '../../../providers/appointments_provider.dart';
@@ -58,14 +59,14 @@ class _ApptListScreenState extends ConsumerState<ApptListScreen>
       ..sort((a, b) => b.dateTime.compareTo(a.dateTime));
 
     return Scaffold(
-      backgroundColor: JuhColors.bg,
+      backgroundColor: context.juhBg,
       appBar: ScreenHeader(
         titleAr: 'مواعيدي',
         titleEn: 'My Appointments',
         bottom: TabBar(
           controller: _tabs,
           labelColor: JuhColors.primary,
-          unselectedLabelColor: JuhColors.textSecondary,
+          unselectedLabelColor: context.juhTextSub,
           indicatorColor: JuhColors.primary,
           labelStyle: const TextStyle(
               fontSize: JuhSizes.fontSm, fontWeight: FontWeight.w600),
@@ -123,14 +124,14 @@ class _ApptListView extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.calendar_today_outlined,
-                size: 56, color: JuhColors.textMuted),
+            Icon(Icons.calendar_today_outlined,
+                size: 56, color: context.juhTextMuted),
             const SizedBox(height: JuhSizes.md),
             Text(
               isAr ? 'لا توجد مواعيد' : 'No appointments',
-              style: const TextStyle(
+              style: TextStyle(
                   fontSize: JuhSizes.fontBase,
-                  color: JuhColors.textSecondary),
+                  color: context.juhTextSub),
             ),
           ],
         ),
@@ -174,14 +175,12 @@ class _ApptCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(JuhSizes.md),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.juhSurface,
         borderRadius: BorderRadius.circular(JuhSizes.radiusLg),
-        border: Border.all(color: JuhColors.border),
+        border: Border.all(color: context.juhBorder),
       ),
       child: Column(
-        crossAxisAlignment: isAr
-            ? CrossAxisAlignment.end
-            : CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Doctor + status row
           Row(
@@ -191,8 +190,8 @@ class _ApptCard extends StatelessWidget {
               Container(
                 width: 44,
                 height: 44,
-                decoration: const BoxDecoration(
-                    color: JuhColors.primarySoft, shape: BoxShape.circle),
+                decoration: BoxDecoration(
+                    color: context.juhPrimarySoft, shape: BoxShape.circle),
                 child: Center(
                   child: Text(
                     initial,
@@ -207,23 +206,21 @@ class _ApptCard extends StatelessWidget {
               const SizedBox(width: JuhSizes.sm),
               Expanded(
                 child: Column(
-                  crossAxisAlignment: isAr
-                      ? CrossAxisAlignment.end
-                      : CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       doctorName,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: JuhSizes.fontBase,
                         fontWeight: FontWeight.w700,
-                        color: JuhColors.textPrimary,
+                        color: context.juhText,
                       ),
                     ),
                     Text(
                       isAr ? appt.specialtyAr : appt.specialtyEn,
-                      style: const TextStyle(
+                      style: TextStyle(
                           fontSize: JuhSizes.fontXs,
-                          color: JuhColors.textSecondary),
+                          color: context.juhTextSub),
                     ),
                   ],
                 ),
@@ -233,7 +230,7 @@ class _ApptCard extends StatelessWidget {
           ),
 
           const SizedBox(height: JuhSizes.sm),
-          const Divider(height: 1, color: JuhColors.border),
+          Divider(height: 1, color: context.juhBorder),
           const SizedBox(height: JuhSizes.sm),
 
           // Date/time + patient
@@ -241,14 +238,14 @@ class _ApptCard extends StatelessWidget {
             textDirection:
                 isAr ? TextDirection.rtl : TextDirection.ltr,
             children: [
-              const Icon(Icons.access_time_outlined,
-                  size: 14, color: JuhColors.textSecondary),
+              Icon(Icons.access_time_outlined,
+                  size: 14, color: context.juhTextSub),
               const SizedBox(width: 4),
               Text(
                 '${dateFmt.format(appt.dateTime)}  ${timeFmt.format(appt.dateTime)}',
-                style: const TextStyle(
+                style: TextStyle(
                     fontSize: JuhSizes.fontXs,
-                    color: JuhColors.textSecondary),
+                    color: context.juhTextSub),
               ),
               const Spacer(),
               if (isForRelative)
@@ -256,7 +253,7 @@ class _ApptCard extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(
                       horizontal: 8, vertical: 2),
                   decoration: BoxDecoration(
-                    color: JuhColors.warningSoft,
+                    color: context.juhWarningSoft,
                     borderRadius:
                         BorderRadius.circular(JuhSizes.radiusFull),
                   ),
@@ -305,9 +302,8 @@ class _ApptCard extends StatelessWidget {
                     onPressed: () =>
                         context.push('/booking?who=self'),
                     style: OutlinedButton.styleFrom(
-                      foregroundColor: JuhColors.textSecondary,
-                      side:
-                          const BorderSide(color: JuhColors.border),
+                      foregroundColor: context.juhTextSub,
+                      side: BorderSide(color: context.juhBorder),
                       padding:
                           const EdgeInsets.symmetric(vertical: 8),
                       shape: RoundedRectangleBorder(

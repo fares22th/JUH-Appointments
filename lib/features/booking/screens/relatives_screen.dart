@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/colors.dart';
+import '../../../core/extensions.dart';
 import '../../../core/sizes.dart';
 import '../../../data/seed_data.dart';
 import '../../../models/relative.dart';
@@ -29,7 +30,7 @@ class RelativesScreen extends ConsumerWidget {
         .nationalId;
 
     return Scaffold(
-      backgroundColor: JuhColors.bg,
+      backgroundColor: context.juhBg,
       appBar: ScreenHeader(
         titleAr: isOtherFlow ? 'حجز لمريض آخر' : 'من سيكون المريض؟',
         titleEn:
@@ -67,10 +68,10 @@ class RelativesScreen extends ConsumerWidget {
                         AlignmentDirectional.centerStart,
                     child: Text(
                       isAr ? 'الأقارب' : 'Relatives',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: JuhSizes.fontSm,
                         fontWeight: FontWeight.w600,
-                        color: JuhColors.textSecondary,
+                        color: context.juhTextSub,
                       ),
                     ),
                   ),
@@ -97,7 +98,7 @@ class RelativesScreen extends ConsumerWidget {
   }
 }
 
-// ─────────────────────── Other patient booking form ────────────────────────
+// ─────────────────────────── Other patient booking form ────────────────────────
 
 class _OtherPatientBookingForm extends ConsumerStatefulWidget {
   final bool isAr;
@@ -256,8 +257,8 @@ class _OtherPatientBookingFormState
                 const EdgeInsets.symmetric(vertical: JuhSizes.md),
             child: Row(
               children: [
-                const Expanded(
-                    child: Divider(color: JuhColors.border)),
+                Expanded(
+                    child: Divider(color: context.juhBorder)),
                 Padding(
                   padding: const EdgeInsets.symmetric(
                       horizontal: JuhSizes.sm),
@@ -265,23 +266,23 @@ class _OtherPatientBookingFormState
                     padding: const EdgeInsets.symmetric(
                         horizontal: 12, vertical: 4),
                     decoration: BoxDecoration(
-                      color: JuhColors.bg,
+                      color: context.juhBg,
                       borderRadius: BorderRadius.circular(
                           JuhSizes.radiusFull),
-                      border: Border.all(color: JuhColors.border),
+                      border: Border.all(color: context.juhBorder),
                     ),
                     child: Text(
                       isAr ? 'أو' : 'OR',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: JuhSizes.fontXs,
                         fontWeight: FontWeight.w600,
-                        color: JuhColors.textSecondary,
+                        color: context.juhTextSub,
                       ),
                     ),
                   ),
                 ),
-                const Expanded(
-                    child: Divider(color: JuhColors.border)),
+                Expanded(
+                    child: Divider(color: context.juhBorder)),
               ],
             ),
           ),
@@ -304,29 +305,29 @@ class _OtherPatientBookingFormState
             validator: _validateNationalId,
             onChanged: (_) =>
                 setState(() => _selectedRelativeId = null),
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: JuhSizes.fontBase,
               fontWeight: FontWeight.w500,
               letterSpacing: 1.2,
-              color: JuhColors.textPrimary,
+              color: context.juhText,
             ),
             decoration: InputDecoration(
               filled: true,
-              fillColor: JuhColors.surface,
+              fillColor: context.juhSurface,
               hintText: isAr
                   ? 'مثال: 98XXXXXXXX'
                   : 'e.g. 98XXXXXXXX',
-              hintStyle: const TextStyle(
-                color: JuhColors.textMuted,
+              hintStyle: TextStyle(
+                color: context.juhTextMuted,
                 letterSpacing: 0,
                 fontWeight: FontWeight.w400,
               ),
               helperText: isAr
                   ? 'رقم وثيقة الهوية الشخصية أو القيد المدني (8–12 خانة)'
                   : 'National / civil ID number (8–12 digits)',
-              helperStyle: const TextStyle(
+              helperStyle: TextStyle(
                 fontSize: JuhSizes.fontXs,
-                color: JuhColors.textSecondary,
+                color: context.juhTextSub,
               ),
               prefixIcon: const Icon(
                 Icons.badge_outlined,
@@ -334,8 +335,8 @@ class _OtherPatientBookingFormState
               ),
               suffixIcon: _nationalIdCtrl.text.isNotEmpty
                   ? IconButton(
-                      icon: const Icon(Icons.clear,
-                          color: JuhColors.textSecondary, size: 18),
+                      icon: Icon(Icons.clear,
+                          color: context.juhTextSub, size: 18),
                       onPressed: () =>
                           setState(() => _nationalIdCtrl.clear()),
                     )
@@ -346,13 +347,13 @@ class _OtherPatientBookingFormState
                 borderRadius:
                     BorderRadius.circular(JuhSizes.radiusLg),
                 borderSide:
-                    const BorderSide(color: JuhColors.border),
+                    BorderSide(color: context.juhBorder),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius:
                     BorderRadius.circular(JuhSizes.radiusLg),
                 borderSide:
-                    const BorderSide(color: JuhColors.border),
+                    BorderSide(color: context.juhBorder),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius:
@@ -455,10 +456,10 @@ class _StepHeader extends StatelessWidget {
         const SizedBox(width: JuhSizes.sm),
         Text(
           title,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: JuhSizes.fontBase,
             fontWeight: FontWeight.w700,
-            color: JuhColors.textPrimary,
+            color: context.juhText,
           ),
         ),
         if (required) ...[
@@ -508,10 +509,10 @@ class _SelectablePatientCard extends StatelessWidget {
           duration: const Duration(milliseconds: 150),
           padding: const EdgeInsets.all(JuhSizes.md),
           decoration: BoxDecoration(
-            color: selected ? JuhColors.primarySoft : JuhColors.surface,
+            color: selected ? context.juhPrimarySoft : context.juhSurface,
             borderRadius: BorderRadius.circular(JuhSizes.radiusLg),
             border: Border.all(
-              color: selected ? JuhColors.primary : JuhColors.border,
+              color: selected ? JuhColors.primary : context.juhBorder,
               width: selected ? 1.5 : 1,
             ),
             boxShadow: [
@@ -529,7 +530,7 @@ class _SelectablePatientCard extends StatelessWidget {
                 width: 44,
                 height: 44,
                 decoration: BoxDecoration(
-                  color: selected ? JuhColors.primary : JuhColors.primarySoft,
+                  color: selected ? JuhColors.primary : context.juhPrimarySoft,
                   shape: BoxShape.circle,
                 ),
                 child: Center(
@@ -555,15 +556,15 @@ class _SelectablePatientCard extends StatelessWidget {
                         fontWeight: FontWeight.w700,
                         color: selected
                             ? JuhColors.primaryInk
-                            : JuhColors.textPrimary,
+                            : context.juhText,
                       ),
                     ),
                     const SizedBox(height: 2),
                     Text(
                       subtitle,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: JuhSizes.fontXs,
-                        color: JuhColors.textSecondary,
+                        color: context.juhTextSub,
                       ),
                     ),
                   ],
@@ -574,7 +575,7 @@ class _SelectablePatientCard extends StatelessWidget {
                 selected
                     ? Icons.check_circle_rounded
                     : Icons.radio_button_unchecked,
-                color: selected ? JuhColors.primary : JuhColors.border,
+                color: selected ? JuhColors.primary : context.juhBorder,
                 size: JuhSizes.iconLg,
               ),
             ],
@@ -617,10 +618,10 @@ class _InsuranceTile extends StatelessWidget {
           padding: const EdgeInsets.symmetric(
               horizontal: JuhSizes.md, vertical: 14),
           decoration: BoxDecoration(
-            color: selected ? JuhColors.primarySoft : JuhColors.surface,
+            color: selected ? context.juhPrimarySoft : context.juhSurface,
             borderRadius: BorderRadius.circular(JuhSizes.radiusLg),
             border: Border.all(
-              color: selected ? JuhColors.primary : JuhColors.border,
+              color: selected ? JuhColors.primary : context.juhBorder,
               width: selected ? 1.5 : 1,
             ),
             boxShadow: [
@@ -640,12 +641,12 @@ class _InsuranceTile extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: selected
                       ? JuhColors.primary.withValues(alpha: 0.12)
-                      : JuhColors.bg,
+                      : context.juhBg,
                   borderRadius: BorderRadius.circular(JuhSizes.radiusMd),
                   border: Border.all(
                     color: selected
                         ? JuhColors.primary.withValues(alpha: 0.3)
-                        : JuhColors.border,
+                        : context.juhBorder,
                   ),
                 ),
                 child: Center(
@@ -661,7 +662,7 @@ class _InsuranceTile extends StatelessWidget {
                     fontWeight: FontWeight.w600,
                     color: selected
                         ? JuhColors.primaryInk
-                        : JuhColors.textPrimary,
+                        : context.juhText,
                   ),
                 ),
               ),
@@ -669,7 +670,7 @@ class _InsuranceTile extends StatelessWidget {
                 selected
                     ? Icons.check_circle_rounded
                     : Icons.radio_button_unchecked,
-                color: selected ? JuhColors.primary : JuhColors.border,
+                color: selected ? JuhColors.primary : context.juhBorder,
                 size: JuhSizes.iconLg,
               ),
             ],
@@ -691,17 +692,17 @@ class _EmptyPatientsHint extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(JuhSizes.md),
       decoration: BoxDecoration(
-        color: JuhColors.surface,
+        color: context.juhSurface,
         borderRadius: BorderRadius.circular(JuhSizes.radiusLg),
         border: Border.all(
-            color: JuhColors.border,
+            color: context.juhBorder,
             style: BorderStyle.solid),
       ),
       child: Row(
         textDirection: isAr ? TextDirection.rtl : TextDirection.ltr,
         children: [
-          const Icon(Icons.info_outline,
-              color: JuhColors.textMuted, size: JuhSizes.iconMd),
+          Icon(Icons.info_outline,
+              color: context.juhTextMuted, size: JuhSizes.iconMd),
           const SizedBox(width: JuhSizes.sm),
           Expanded(
             child: Text(
@@ -709,9 +710,9 @@ class _EmptyPatientsHint extends StatelessWidget {
                   ? 'لا توجد حالات سابقة. يمكنك إدخال الرقم الوطني أدناه.'
                   : 'No previous patients. Enter a national ID below.',
               textAlign: isAr ? TextAlign.right : TextAlign.left,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: JuhSizes.fontSm,
-                color: JuhColors.textSecondary,
+                color: context.juhTextSub,
               ),
             ),
           ),
@@ -751,9 +752,9 @@ class _PersonCard extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.all(JuhSizes.md),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: context.juhSurface,
             borderRadius: BorderRadius.circular(JuhSizes.radiusLg),
-            border: Border.all(color: JuhColors.border),
+            border: Border.all(color: context.juhBorder),
           ),
           child: Row(
             textDirection: isAr ? TextDirection.rtl : TextDirection.ltr,
@@ -761,8 +762,8 @@ class _PersonCard extends StatelessWidget {
               Container(
                 width: 44,
                 height: 44,
-                decoration: const BoxDecoration(
-                  color: JuhColors.primarySoft,
+                decoration: BoxDecoration(
+                  color: context.juhPrimarySoft,
                   shape: BoxShape.circle,
                 ),
                 child: Center(
@@ -783,18 +784,18 @@ class _PersonCard extends StatelessWidget {
                   children: [
                     Text(
                       name,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: JuhSizes.fontBase,
                         fontWeight: FontWeight.w700,
-                        color: JuhColors.textPrimary,
+                        color: context.juhText,
                       ),
                     ),
                     const SizedBox(height: 2),
                     Text(
                       subtitle,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: JuhSizes.fontXs,
-                        color: JuhColors.textSecondary,
+                        color: context.juhTextSub,
                       ),
                     ),
                   ],
@@ -802,7 +803,7 @@ class _PersonCard extends StatelessWidget {
               ),
               Icon(
                 isAr ? Icons.chevron_left : Icons.chevron_right,
-                color: JuhColors.textSecondary,
+                color: context.juhTextSub,
               ),
             ],
           ),
@@ -831,9 +832,9 @@ class _AddRelativeRow extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.all(JuhSizes.md),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: context.juhSurface,
             borderRadius: BorderRadius.circular(JuhSizes.radiusLg),
-            border: Border.all(color: JuhColors.border),
+            border: Border.all(color: context.juhBorder),
           ),
           child: Row(
             textDirection: isAr ? TextDirection.rtl : TextDirection.ltr,
@@ -842,7 +843,7 @@ class _AddRelativeRow extends StatelessWidget {
                 width: 44,
                 height: 44,
                 decoration: BoxDecoration(
-                  color: JuhColors.primarySoft,
+                  color: context.juhPrimarySoft,
                   borderRadius: BorderRadius.circular(JuhSizes.radiusMd),
                 ),
                 child: const Icon(Icons.add, color: JuhColors.primary),

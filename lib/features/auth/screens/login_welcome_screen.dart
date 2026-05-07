@@ -416,9 +416,7 @@ class _EditableRow extends StatelessWidget {
                     ),
                   )
                 : Column(
-                    crossAxisAlignment: isAr
-                        ? CrossAxisAlignment.end
-                        : CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(label,
                           style: const TextStyle(

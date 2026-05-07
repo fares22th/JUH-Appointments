@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/colors.dart';
+import '../../../core/extensions.dart';
 import '../../../core/sizes.dart';
 import '../../../data/seed_data.dart';
 import '../../../models/doctor.dart';
@@ -69,7 +70,7 @@ class _BookingChooseScreenState extends ConsumerState<BookingChooseScreen> {
           ];
 
     return Scaffold(
-      backgroundColor: JuhColors.bg,
+      backgroundColor: context.juhBg,
       appBar: const ScreenHeader(
         titleAr: 'احجز موعدك',
         titleEn: 'Book Appointment',
@@ -91,10 +92,10 @@ class _BookingChooseScreenState extends ConsumerState<BookingChooseScreen> {
               alignment: AlignmentDirectional.centerStart,
               child: Text(
                 stepTitles[_step],
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: JuhSizes.fontBase,
                   fontWeight: FontWeight.w700,
-                  color: JuhColors.textPrimary,
+                  color: context.juhText,
                 ),
               ),
             ),
@@ -112,15 +113,15 @@ class _BookingChooseScreenState extends ConsumerState<BookingChooseScreen> {
                 onChanged: (_) => setState(() {}),
                 decoration: InputDecoration(
                   hintText: isAr ? 'بحث...' : 'Search...',
-                  hintStyle: const TextStyle(color: JuhColors.textMuted),
+                  hintStyle: TextStyle(color: context.juhTextMuted),
                   filled: true,
-                  fillColor: Colors.white,
+                  fillColor: context.juhSurface,
                   prefixIcon:
-                      const Icon(Icons.search, color: JuhColors.textSecondary),
+                      Icon(Icons.search, color: context.juhTextSub),
                   suffixIcon: query.isNotEmpty
                       ? IconButton(
-                          icon: const Icon(Icons.clear,
-                              color: JuhColors.textSecondary),
+                          icon: Icon(Icons.clear,
+                              color: context.juhTextSub),
                           onPressed: () {
                             _searchCtrl.clear();
                             setState(() {});
@@ -131,11 +132,11 @@ class _BookingChooseScreenState extends ConsumerState<BookingChooseScreen> {
                       horizontal: JuhSizes.md, vertical: 12),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(JuhSizes.radiusMd),
-                    borderSide: const BorderSide(color: JuhColors.border),
+                    borderSide: BorderSide(color: context.juhBorder),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(JuhSizes.radiusMd),
-                    borderSide: const BorderSide(color: JuhColors.border),
+                    borderSide: BorderSide(color: context.juhBorder),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(JuhSizes.radiusMd),
@@ -188,7 +189,7 @@ class _BookingChooseScreenState extends ConsumerState<BookingChooseScreen> {
               child: AppButton(
                 label: isAr ? 'التالي: اختر الموعد' : 'Next: Choose Slot',
                 onTap: () => context.push('/calendar?who=${widget.who}'),
-                icon: Icons.arrow_forward,
+                icon: isAr ? Icons.arrow_back : Icons.arrow_forward,
               ),
             ),
 
@@ -202,7 +203,7 @@ class _BookingChooseScreenState extends ConsumerState<BookingChooseScreen> {
                   _step--;
                   _searchCtrl.clear();
                 }),
-                icon: Icons.arrow_back,
+                icon: isAr ? Icons.arrow_forward : Icons.arrow_back,
               ),
             ),
         ],
@@ -261,7 +262,7 @@ class _SpecialtyList extends StatelessWidget {
     if (filtered.isEmpty) {
       return Center(
           child: Text(isAr ? 'لا توجد نتائج' : 'No results',
-              style: const TextStyle(color: JuhColors.textSecondary)));
+              style: TextStyle(color: context.juhTextSub)));
     }
     return ListView.separated(
       padding: const EdgeInsets.symmetric(horizontal: JuhSizes.md),
@@ -315,7 +316,7 @@ class _DoctorList extends StatelessWidget {
     if (filtered.isEmpty) {
       return Center(
           child: Text(isAr ? 'لا توجد نتائج' : 'No results',
-              style: const TextStyle(color: JuhColors.textSecondary)));
+              style: TextStyle(color: context.juhTextSub)));
     }
     return ListView.separated(
       padding: const EdgeInsets.symmetric(horizontal: JuhSizes.md),
@@ -364,10 +365,10 @@ class _SelectTile extends StatelessWidget {
           duration: const Duration(milliseconds: 150),
           padding: const EdgeInsets.all(JuhSizes.md),
           decoration: BoxDecoration(
-            color: isSelected ? JuhColors.primarySoft : Colors.white,
+            color: isSelected ? context.juhPrimarySoft : context.juhSurface,
             borderRadius: BorderRadius.circular(JuhSizes.radiusLg),
             border: Border.all(
-                color: isSelected ? JuhColors.primary : JuhColors.border,
+                color: isSelected ? JuhColors.primary : context.juhBorder,
                 width: isSelected ? 1.5 : 1),
           ),
           child: Row(
@@ -386,16 +387,16 @@ class _SelectTile extends StatelessWidget {
                         fontWeight: FontWeight.w600,
                         color: isSelected
                             ? JuhColors.primaryInk
-                            : JuhColors.textPrimary,
+                            : context.juhText,
                       ),
                     ),
                     if (subtitle != null) ...[
                       const SizedBox(height: 2),
                       Text(
                         subtitle!,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: JuhSizes.fontXs,
-                          color: JuhColors.textSecondary,
+                          color: context.juhTextSub,
                         ),
                       ),
                     ],
@@ -441,10 +442,10 @@ class _DoctorTile extends StatelessWidget {
           duration: const Duration(milliseconds: 150),
           padding: const EdgeInsets.all(JuhSizes.md),
           decoration: BoxDecoration(
-            color: isSelected ? JuhColors.primarySoft : Colors.white,
+            color: isSelected ? context.juhPrimarySoft : context.juhSurface,
             borderRadius: BorderRadius.circular(JuhSizes.radiusLg),
             border: Border.all(
-                color: isSelected ? JuhColors.primary : JuhColors.border,
+                color: isSelected ? JuhColors.primary : context.juhBorder,
                 width: isSelected ? 1.5 : 1),
           ),
           child: Row(
@@ -452,7 +453,7 @@ class _DoctorTile extends StatelessWidget {
             children: [
             CircleAvatar(
               backgroundColor:
-                  isSelected ? JuhColors.primary : JuhColors.primarySoft,
+                  isSelected ? JuhColors.primary : context.juhPrimarySoft,
               radius: 26,
               child: Text(
                 initial,
@@ -471,18 +472,18 @@ class _DoctorTile extends StatelessWidget {
                 children: [
                   Text(
                     nameDisplay,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: JuhSizes.fontBase,
                       fontWeight: FontWeight.w700,
-                      color: JuhColors.textPrimary,
+                      color: context.juhText,
                     ),
                   ),
                   const SizedBox(height: 2),
                   Text(
                     isAr ? doc.titleAr : doc.titleEn,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: JuhSizes.fontXs,
-                      color: JuhColors.textSecondary,
+                      color: context.juhTextSub,
                     ),
                   ),
                   const SizedBox(height: 6),
@@ -493,18 +494,18 @@ class _DoctorTile extends StatelessWidget {
                       const SizedBox(width: 3),
                       Text(
                         '${doc.rating}',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: JuhSizes.fontXs,
                           fontWeight: FontWeight.w600,
-                          color: JuhColors.textPrimary,
+                          color: context.juhText,
                         ),
                       ),
                       const SizedBox(width: 4),
                       Text(
                         '(${doc.reviewCount})',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: JuhSizes.fontXs,
-                          color: JuhColors.textSecondary,
+                          color: context.juhTextSub,
                         ),
                       ),
                       const Spacer(),

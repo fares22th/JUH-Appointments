@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart' hide TextDirection;
 import '../../../core/colors.dart';
+import '../../../core/extensions.dart';
 import '../../../core/sizes.dart';
 import '../../../models/appointment.dart';
 import '../../../providers/appointments_provider.dart';
@@ -30,7 +31,7 @@ class ApptDetailScreen extends ConsumerWidget {
         body: Center(
             child: Text(
           isAr ? 'لم يتم العثور على الموعد' : 'Appointment not found',
-          style: const TextStyle(color: JuhColors.textSecondary),
+          style: TextStyle(color: context.juhTextSub),
         )),
       );
     }
@@ -48,7 +49,7 @@ class ApptDetailScreen extends ConsumerWidget {
         .replaceAll('Dr. ', '')[0];
 
     return Scaffold(
-      backgroundColor: JuhColors.bg,
+      backgroundColor: context.juhBg,
       appBar: const ScreenHeader(
           titleAr: 'تفاصيل الموعد', titleEn: 'Appointment Details'),
       body: SingleChildScrollView(
@@ -68,9 +69,7 @@ class ApptDetailScreen extends ConsumerWidget {
                 borderRadius: BorderRadius.circular(JuhSizes.radiusLg),
               ),
               child: Column(
-                crossAxisAlignment: isAr
-                    ? CrossAxisAlignment.end
-                    : CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     textDirection:
@@ -91,9 +90,7 @@ class ApptDetailScreen extends ConsumerWidget {
                       const SizedBox(width: JuhSizes.md),
                       Expanded(
                         child: Column(
-                          crossAxisAlignment: isAr
-                              ? CrossAxisAlignment.end
-                              : CrossAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
                               doctorName,
@@ -172,7 +169,7 @@ class ApptDetailScreen extends ConsumerWidget {
                   padding: const EdgeInsets.symmetric(
                       horizontal: JuhSizes.md, vertical: 12),
                   decoration: BoxDecoration(
-                    color: JuhColors.primarySoft,
+                    color: context.juhPrimarySoft,
                     borderRadius: BorderRadius.circular(JuhSizes.radiusMd),
                   ),
                   child: Row(
@@ -277,13 +274,15 @@ class ApptDetailScreen extends ConsumerWidget {
               Container(
                 padding: const EdgeInsets.all(JuhSizes.md),
                 decoration: BoxDecoration(
-                  color: JuhColors.errorSoft,
+                  color: context.juhErrorSoft,
                   borderRadius:
                       BorderRadius.circular(JuhSizes.radiusMd),
                   border: Border.all(
                       color: JuhColors.error.withValues(alpha: 0.3)),
                 ),
                 child: Row(
+                  textDirection:
+                      isAr ? TextDirection.rtl : TextDirection.ltr,
                   children: [
                     const Icon(Icons.cancel_outlined,
                         color: JuhColors.error,
@@ -355,9 +354,9 @@ class _DetailCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.juhSurface,
         borderRadius: BorderRadius.circular(JuhSizes.radiusLg),
-        border: Border.all(color: JuhColors.border),
+        border: Border.all(color: context.juhBorder),
       ),
       child: Column(
         children: rows.asMap().entries.map((e) {
@@ -375,7 +374,7 @@ class _DetailCard extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: JuhColors.primarySoft,
+                        color: context.juhPrimarySoft,
                         borderRadius:
                             BorderRadius.circular(JuhSizes.radiusSm),
                       ),
@@ -386,24 +385,22 @@ class _DetailCard extends StatelessWidget {
                     const SizedBox(width: JuhSizes.md),
                     Expanded(
                       child: Column(
-                        crossAxisAlignment: isAr
-                            ? CrossAxisAlignment.end
-                            : CrossAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
                             row.$2,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: JuhSizes.fontXs,
-                              color: JuhColors.textSecondary,
+                              color: context.juhTextSub,
                             ),
                           ),
                           const SizedBox(height: 2),
                           Text(
                             row.$3,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: JuhSizes.fontSm,
                               fontWeight: FontWeight.w600,
-                              color: JuhColors.textPrimary,
+                              color: context.juhText,
                             ),
                           ),
                         ],
@@ -413,7 +410,7 @@ class _DetailCard extends StatelessWidget {
                 ),
               ),
               if (i < rows.length - 1)
-                const Divider(height: 1, color: JuhColors.border),
+                Divider(height: 1, color: context.juhBorder),
             ],
           );
         }).toList(),
@@ -445,9 +442,9 @@ class _ActionBtn extends StatelessWidget {
         highlightColor: color.withValues(alpha: 0.06),
         child: Container(
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: context.juhSurface,
             borderRadius: BorderRadius.circular(JuhSizes.radiusMd),
-            border: Border.all(color: JuhColors.border),
+            border: Border.all(color: context.juhBorder),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,

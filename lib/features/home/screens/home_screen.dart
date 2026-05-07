@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart' hide TextDirection;
 import '../../../core/colors.dart';
+import '../../../core/extensions.dart';
 import '../../../core/nhost.dart';
 import '../../../core/sizes.dart';
 import '../../../data/seed_data.dart';
@@ -33,9 +34,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         return Container(
           padding: const EdgeInsets.fromLTRB(
               JuhSizes.md, JuhSizes.sm, JuhSizes.md, JuhSizes.lg),
-          decoration: const BoxDecoration(
-            color: JuhColors.surface,
-            borderRadius: BorderRadius.vertical(
+          decoration: BoxDecoration(
+            color: ctx.juhSurface,
+            borderRadius: const BorderRadius.vertical(
               top: Radius.circular(JuhSizes.radiusXl),
             ),
           ),
@@ -50,7 +51,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   height: 4,
                   margin: const EdgeInsets.only(bottom: JuhSizes.md),
                   decoration: BoxDecoration(
-                    color: JuhColors.border,
+                    color: ctx.juhBorder,
                     borderRadius: BorderRadius.circular(JuhSizes.radiusFull),
                   ),
                 ),
@@ -71,16 +72,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   ),
                   Text(
                     isAr ? 'حجز موعد جديد' : 'New Appointment',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: JuhSizes.fontMd,
                       fontWeight: FontWeight.w700,
-                      color: JuhColors.textPrimary,
+                      color: ctx.juhText,
                     ),
                   ),
                 ],
               ),
               const SizedBox(height: JuhSizes.md),
               _BookingOptionTile(
+                isAr: isAr,
                 title: isAr ? 'حجز لي' : 'Book for me',
                 subtitle:
                     isAr ? 'متابعة مباشرة للحجز الشخصي' : 'Continue as self',
@@ -92,6 +94,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ),
               const SizedBox(height: JuhSizes.sm),
               _BookingOptionTile(
+                isAr: isAr,
                 title: isAr ? 'حجز لشخص آخر' : 'Book for someone else',
                 subtitle:
                     isAr ? 'اختر من قائمة الأقارب' : 'Choose from relatives',
@@ -127,29 +130,35 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
     return Scaffold(
       key: _scaffoldKey,
-      backgroundColor: JuhColors.bg,
+      backgroundColor: context.juhBg,
       drawer: _AppDrawer(isAr: isAr, name: name, avatarLetter: avatarLetter),
       body: CustomScrollView(
         slivers: [
-          // ── Gradient header ──
+          // ── Gradient header + floating appointment card ──
           SliverToBoxAdapter(
-            child: _HomeHeader(
-              isAr: isAr,
-              firstName: firstName,
-              onMenuTap: () => _scaffoldKey.currentState?.openDrawer(),
-              onNotifTap: () => context.push('/appointments'),
-              notifCount: upcoming.length,
-            ),
-          ),
-
-          // ── Next appointment card ──
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(
-                  JuhSizes.md, JuhSizes.md, JuhSizes.md, JuhSizes.md),
-              child: nextAppt != null
-                  ? _NextApptCard(appt: nextAppt, isAr: isAr)
-                  : _EmptyNextCard(isAr: isAr),
+            child: Stack(
+              children: [
+                Column(
+                  children: [
+                    _HomeHeader(
+                      isAr: isAr,
+                      firstName: firstName,
+                      onMenuTap: () => _scaffoldKey.currentState?.openDrawer(),
+                      onNotifTap: () => context.push('/appointments'),
+                      notifCount: upcoming.length,
+                    ),
+                    Container(height: 110, color: context.juhBg),
+                  ],
+                ),
+                Positioned(
+                  bottom: 12,
+                  left: JuhSizes.md,
+                  right: JuhSizes.md,
+                  child: nextAppt != null
+                      ? _NextApptCard(appt: nextAppt, isAr: isAr)
+                      : _EmptyNextCard(isAr: isAr),
+                ),
+              ],
             ),
           ),
 
@@ -160,68 +169,69 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   JuhSizes.md, 0, JuhSizes.md, JuhSizes.sm),
               child: _SectionHeader(
                 isAr: isAr,
-                title: isAr ? 'الخدمات' : 'Services',
+                title: isAr ? 'خدماتك' : 'Your Services',
+                action: Text(
+                  isAr ? 'عرض الكل' : 'View All',
+                  style: const TextStyle(
+                    fontSize: JuhSizes.fontSm,
+                    fontWeight: FontWeight.w600,
+                    color: JuhColors.primary,
+                  ),
+                ),
               ),
             ),
           ),
-          SliverPadding(
-            padding: const EdgeInsets.symmetric(horizontal: JuhSizes.md),
-            sliver: SliverGrid(
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 12,
-                mainAxisSpacing: 12,
-                childAspectRatio: 1.18,
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: JuhSizes.md),
+              child: Column(
+                children: [
+                  _FeaturedBookingCard(
+                    isAr: isAr,
+                    onTap: () => _showBookingOptions(context, isAr),
+                  ),
+                  const SizedBox(height: 12),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _ServiceCard(
+                          isAr: isAr,
+                          icon: Icons.event_available_rounded,
+                          iconColor: JuhColors.primary,
+                          cardBg: context.juhPrimarySoft,
+                          title: isAr ? 'مواعيدي' : 'My Appointments',
+                          subtitle: isAr
+                              ? '${upcoming.length} موعد قادم'
+                              : '${upcoming.length} upcoming',
+                          onTap: () => context.push('/appointments'),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: _ServiceCard(
+                          isAr: isAr,
+                          icon: Icons.personal_injury_rounded,
+                          iconColor: JuhColors.success,
+                          cardBg: context.juhSuccessSoft,
+                          title: isAr ? 'إجازات الأطباء' : 'Doctors Leave',
+                          subtitle: isAr ? 'التحقق من التوافر' : 'Check availability',
+                          onTap: () => context.push('/doctors-leave-inquiry'),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  _ServiceCardWide(
+                    isAr: isAr,
+                    icon: Icons.local_hospital_rounded,
+                    iconColor: JuhColors.primaryMid,
+                    cardBg: context.juhPrimarySoft,
+                    title: isAr ? 'استفسار مواعيد العيادات' : 'Clinic Appointments',
+                    subtitle: isAr ? 'متابعة مواعيد العيادات' : 'Track clinic slots',
+                    onTap: () => context.push('/clinic-appointments-inquiry'),
+                  ),
+                ],
               ),
-              delegate: SliverChildListDelegate([
-                _ActionCard(
-                  isAr: isAr,
-                  icon: Icons.medical_services_rounded,
-                  iconColor: JuhColors.accent,
-                  iconBg: JuhColors.accentSoft,
-                  title: isAr ? 'حجز موعد جديد' : 'New Appointment',
-                  subtitle: isAr
-                      ? 'لي أو لشخص آخر'
-                      : 'For me or someone else',
-                  onTap: () => _showBookingOptions(context, isAr),
-                ),
-                _ActionCard(
-                  isAr: isAr,
-                  icon: Icons.event_available_rounded,
-                  iconColor: JuhColors.primary,
-                  iconBg: JuhColors.primarySoft,
-                  title: isAr ? 'مواعيدي' : 'My Appointments',
-                  subtitle: isAr
-                      ? '${upcoming.length} موعد قادم'
-                      : '${upcoming.length} upcoming',
-                  onTap: () => context.push('/appointments'),
-                ),
-                _ActionCard(
-                  isAr: isAr,
-                  icon: Icons.local_hospital_rounded,
-                  iconColor: JuhColors.primaryMid,
-                  iconBg: JuhColors.primarySoft,
-                  title: isAr
-                      ? 'استفسار مواعيد العيادات'
-                      : 'Clinic Appointments',
-                  subtitle: isAr
-                      ? 'متابعة مواعيد العيادات'
-                      : 'Track clinic slots',
-                  onTap: () =>
-                      context.push('/clinic-appointments-inquiry'),
-                ),
-                _ActionCard(
-                  isAr: isAr,
-                  icon: Icons.personal_injury_rounded,
-                  iconColor: const Color(0xFF6B4B8C),
-                  iconBg: const Color(0xFFEDE5F5),
-                  title: isAr ? 'إجازات الأطباء' : 'Doctors Leave',
-                  subtitle: isAr
-                      ? 'التحقق من إجازات الأطباء'
-                      : 'Check doctors leaves',
-                  onTap: () => context.push('/doctors-leave-inquiry'),
-                ),
-              ]),
             ),
           ),
 
@@ -345,7 +355,7 @@ class _HomeHeader extends StatelessWidget {
             JuhSizes.md,
             topPad + JuhSizes.md,
             JuhSizes.md,
-            JuhSizes.lg,
+            JuhSizes.xl + 20,
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -502,7 +512,8 @@ class _HomeHeader extends StatelessWidget {
 class _SectionHeader extends StatelessWidget {
   final bool isAr;
   final String title;
-  const _SectionHeader({required this.isAr, required this.title});
+  final Widget? action;
+  const _SectionHeader({required this.isAr, required this.title, this.action});
 
   @override
   Widget build(BuildContext context) {
@@ -521,12 +532,14 @@ class _SectionHeader extends StatelessWidget {
         const SizedBox(width: JuhSizes.sm),
         Text(
           title,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: JuhSizes.fontBase,
             fontWeight: FontWeight.w700,
-            color: JuhColors.textPrimary,
+            color: context.juhText,
           ),
         ),
+        const Spacer(),
+        if (action != null) action!,
       ],
     );
   }
@@ -541,8 +554,7 @@ class _NextApptCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final dateFmt =
-        DateFormat(isAr ? 'd MMMM' : 'MMM d', isAr ? 'ar' : 'en');
+    final dateFmt = DateFormat(isAr ? 'd MMMM' : 'MMM d', isAr ? 'ar' : 'en');
     final timeFmt = DateFormat('HH:mm');
 
     return Material(
@@ -551,105 +563,99 @@ class _NextApptCard extends StatelessWidget {
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: () => context.push('/appointments/${appt.id}'),
-        splashColor: Colors.white.withValues(alpha: 0.2),
+        splashColor: JuhColors.primary.withValues(alpha: 0.06),
         highlightColor: Colors.transparent,
         child: Container(
-        padding: const EdgeInsets.symmetric(
-            horizontal: JuhSizes.md, vertical: 10),
-        decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            colors: [JuhColors.primary, JuhColors.primaryInk],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
+          padding: const EdgeInsets.all(JuhSizes.md),
+          decoration: BoxDecoration(
+            color: context.juhSurface,
+            borderRadius: BorderRadius.circular(JuhSizes.radiusLg),
+            border: Border.all(color: context.juhBorder),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.07),
+                blurRadius: 16,
+                offset: const Offset(0, 4),
+              ),
+            ],
           ),
-          borderRadius: BorderRadius.circular(JuhSizes.radiusLg),
-          boxShadow: [
-            BoxShadow(
-              color: JuhColors.primary.withValues(alpha: 0.22),
-              blurRadius: 10,
-              offset: const Offset(0, 3),
-            ),
-          ],
-        ),
-        child: Row(
-          textDirection: isAr ? TextDirection.rtl : TextDirection.ltr,
-          children: [
-            // Info
-            Expanded(
-              child: Column(
-                crossAxisAlignment:
-                    CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 7, vertical: 2),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.2),
-                      borderRadius:
-                          BorderRadius.circular(JuhSizes.radiusFull),
-                    ),
-                    child: Text(
-                      isAr ? 'موعدك القادم' : 'Next Appointment',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 10,
-                        fontWeight: FontWeight.w600,
+          child: Row(
+            textDirection: isAr ? TextDirection.rtl : TextDirection.ltr,
+            children: [
+              // Info
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                      decoration: BoxDecoration(
+                        color: context.juhPrimarySoft,
+                        borderRadius: BorderRadius.circular(JuhSizes.radiusFull),
+                      ),
+                      child: Text(
+                        isAr ? 'موعدك القادم' : 'Next Appointment',
+                        style: const TextStyle(
+                          color: JuhColors.primary,
+                          fontSize: 10,
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 5),
-                  Text(
-                    isAr ? appt.doctorNameAr : appt.doctorNameEn,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: JuhSizes.fontBase,
-                      fontWeight: FontWeight.w800,
+                    const SizedBox(height: 8),
+                    Text(
+                      isAr ? appt.doctorNameAr : appt.doctorNameEn,
+                      style: TextStyle(
+                        color: context.juhText,
+                        fontSize: JuhSizes.fontMd,
+                        fontWeight: FontWeight.w800,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 1),
-                  Text(
-                    isAr ? appt.specialtyAr : appt.specialtyEn,
-                    style: const TextStyle(
-                        color: Colors.white70, fontSize: JuhSizes.fontXs),
-                  ),
-                  const SizedBox(height: 6),
-                  Row(
-                    textDirection:
-                        isAr ? TextDirection.rtl : TextDirection.ltr,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      _InfoChip(
-                        icon: Icons.calendar_today_outlined,
-                        label: dateFmt.format(appt.dateTime),
+                    const SizedBox(height: 2),
+                    Text(
+                      isAr ? appt.specialtyAr : appt.specialtyEn,
+                      style: TextStyle(
+                        color: context.juhTextSub,
+                        fontSize: JuhSizes.fontXs,
                       ),
-                      const SizedBox(width: 6),
-                      _InfoChip(
-                        icon: Icons.access_time_outlined,
-                        label: timeFmt.format(appt.dateTime),
-                      ),
-                    ],
-                  ),
-                ],
+                    ),
+                    const SizedBox(height: 10),
+                    Row(
+                      textDirection: isAr ? TextDirection.rtl : TextDirection.ltr,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        _InfoChip(
+                          icon: Icons.calendar_today_outlined,
+                          label: dateFmt.format(appt.dateTime),
+                        ),
+                        const SizedBox(width: 6),
+                        _InfoChip(
+                          icon: Icons.access_time_outlined,
+                          label: timeFmt.format(appt.dateTime),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-            ),
-            const SizedBox(width: JuhSizes.sm),
-            // Arrow button
-            Container(
-              width: 36,
-              height: 36,
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.18),
-                shape: BoxShape.circle,
+              const SizedBox(width: JuhSizes.sm),
+              // Nav button
+              Container(
+                width: 36,
+                height: 36,
+                decoration: BoxDecoration(
+                  color: context.juhPrimarySoft,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  isAr ? Icons.chevron_left : Icons.chevron_right,
+                  color: JuhColors.primary,
+                  size: JuhSizes.iconMd,
+                ),
               ),
-              child: Icon(
-                isAr ? Icons.chevron_left : Icons.chevron_right,
-                color: Colors.white,
-                size: JuhSizes.iconMd,
-              ),
-            ),
-          ],
-        ),
+            ],
+          ),
         ),
       ),
     );
@@ -664,20 +670,21 @@ class _InfoChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.15),
+        color: context.juhBg,
         borderRadius: BorderRadius.circular(JuhSizes.radiusSm),
+        border: Border.all(color: context.juhBorder),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, color: Colors.white, size: JuhSizes.iconSm),
+          Icon(icon, color: JuhColors.primary, size: JuhSizes.iconSm),
           const SizedBox(width: 4),
           Text(
             label,
-            style: const TextStyle(
-              color: Colors.white,
+            style: TextStyle(
+              color: context.juhText,
               fontSize: JuhSizes.fontXs,
               fontWeight: FontWeight.w600,
             ),
@@ -698,17 +705,17 @@ class _EmptyNextCard extends StatelessWidget {
       padding: const EdgeInsets.symmetric(
           horizontal: JuhSizes.md, vertical: 14),
       decoration: BoxDecoration(
-        color: JuhColors.surface,
+        color: context.juhSurface,
         borderRadius: BorderRadius.circular(JuhSizes.radiusLg),
-        border: Border.all(color: JuhColors.border),
+        border: Border.all(color: context.juhBorder),
       ),
       child: Row(
         textDirection: isAr ? TextDirection.rtl : TextDirection.ltr,
         children: [
           Container(
             padding: const EdgeInsets.all(10),
-            decoration: const BoxDecoration(
-              color: JuhColors.primarySoft,
+            decoration: BoxDecoration(
+              color: context.juhPrimarySoft,
               shape: BoxShape.circle,
             ),
             child: const Icon(
@@ -725,10 +732,10 @@ class _EmptyNextCard extends StatelessWidget {
               children: [
                 Text(
                   isAr ? 'لا توجد مواعيد قادمة' : 'No upcoming appointments',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: JuhSizes.fontSm,
                     fontWeight: FontWeight.w600,
-                    color: JuhColors.textPrimary,
+                    color: context.juhText,
                   ),
                 ),
                 const SizedBox(height: 2),
@@ -736,9 +743,9 @@ class _EmptyNextCard extends StatelessWidget {
                   isAr
                       ? 'استخدم الإجراءات السريعة أدناه لحجز موعد'
                       : 'Use Quick Actions below to book an appointment',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: JuhSizes.fontXs,
-                    color: JuhColors.textSecondary,
+                    color: context.juhTextSub,
                   ),
                 ),
               ],
@@ -750,130 +757,314 @@ class _EmptyNextCard extends StatelessWidget {
   }
 }
 
-// ───────────────────────────── Action card ─────────────────────────────────
+// ───────────────────────── Press effect wrapper ────────────────────────────
 
-class _ActionCard extends StatefulWidget {
-  final IconData icon;
-  final Color iconColor;
-  final Color iconBg;
-  final String title;
-  final String subtitle;
+class _Pressable extends StatefulWidget {
+  final Widget child;
   final VoidCallback onTap;
-  final bool isAr;
-  const _ActionCard({
-    required this.icon,
-    required this.iconColor,
-    required this.iconBg,
-    required this.title,
-    required this.subtitle,
+  final BorderRadius borderRadius;
+  const _Pressable({
+    required this.child,
     required this.onTap,
-    required this.isAr,
+    required this.borderRadius,
   });
 
   @override
-  State<_ActionCard> createState() => _ActionCardState();
+  State<_Pressable> createState() => _PressableState();
 }
 
-class _ActionCardState extends State<_ActionCard> {
+class _PressableState extends State<_Pressable> {
   bool _pressed = false;
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: Colors.transparent,
+    return AnimatedScale(
+      scale: _pressed ? 0.94 : 1.0,
+      duration: const Duration(milliseconds: 110),
+      curve: Curves.easeInOut,
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: widget.borderRadius,
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: widget.onTap,
+          onTapDown: (_) => setState(() => _pressed = true),
+          onTapUp: (_) => setState(() => _pressed = false),
+          onTapCancel: () => setState(() => _pressed = false),
+          splashColor: Colors.black.withValues(alpha: 0.07),
+          highlightColor: Colors.black.withValues(alpha: 0.04),
+          child: widget.child,
+        ),
+      ),
+    );
+  }
+}
+
+// ───────────────────────── Featured booking card ───────────────────────────
+
+class _FeaturedBookingCard extends StatelessWidget {
+  final bool isAr;
+  final VoidCallback onTap;
+  const _FeaturedBookingCard({required this.isAr, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return _Pressable(
+      onTap: onTap,
       borderRadius: BorderRadius.circular(JuhSizes.radiusXl),
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: widget.onTap,
-        onTapDown: (_) => setState(() => _pressed = true),
-        onTapUp: (_) => setState(() => _pressed = false),
-        onTapCancel: () => setState(() => _pressed = false),
-        splashColor: widget.iconColor.withValues(alpha: 0.12),
-        highlightColor: Colors.transparent,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 150),
-          padding: const EdgeInsets.all(14),
-          decoration: BoxDecoration(
-            color: _pressed ? JuhColors.primarySoft : JuhColors.surface,
+      child: Container(
+        padding: const EdgeInsets.all(JuhSizes.md),
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            colors: [JuhColors.accent, JuhColors.accentInk],
+            begin: Alignment.topRight,
+            end: Alignment.bottomLeft,
+          ),
             borderRadius: BorderRadius.circular(JuhSizes.radiusXl),
-            border: Border.all(
-              color: _pressed
-                  ? JuhColors.primary
-                  : JuhColors.border.withValues(alpha: 0.6),
-              width: _pressed ? 1.5 : 1,
-            ),
-            boxShadow: _pressed
-                ? []
-                : [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.06),
-                      blurRadius: 14,
-                      offset: const Offset(0, 4),
+            boxShadow: [
+              BoxShadow(
+                color: JuhColors.accent.withValues(alpha: 0.3),
+                blurRadius: 12,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Row(
+            textDirection: isAr ? TextDirection.rtl : TextDirection.ltr,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      isAr ? 'حجز موعد جديد' : 'New Appointment',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: JuhSizes.fontMd,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                    const SizedBox(height: 3),
+                    Text(
+                      isAr
+                          ? 'احجز لك أو لأحد أقاربك'
+                          : 'Book for you or a relative',
+                      style: const TextStyle(
+                        color: Colors.white70,
+                        fontSize: JuhSizes.fontXs,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.2),
+                        borderRadius:
+                            BorderRadius.circular(JuhSizes.radiusFull),
+                      ),
+                      child: Text(
+                        isAr ? 'ابدأ الآن ←' : 'Get Started →',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: JuhSizes.fontXs,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
                     ),
                   ],
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Row(
-                textDirection:
-                    widget.isAr ? TextDirection.rtl : TextDirection.ltr,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  AnimatedContainer(
-                    duration: const Duration(milliseconds: 150),
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: _pressed
-                          ? widget.iconColor.withValues(alpha: 0.18)
-                          : widget.iconBg,
-                      borderRadius:
-                          BorderRadius.circular(JuhSizes.radiusSm),
-                    ),
-                    child: Icon(widget.icon, color: widget.iconColor, size: 20),
-                  ),
-                  AnimatedRotation(
-                    duration: const Duration(milliseconds: 150),
-                    turns: _pressed ? 0.02 : 0,
-                    child: Icon(
-                      widget.isAr ? Icons.chevron_left : Icons.chevron_right,
-                      color: _pressed
-                          ? JuhColors.primary
-                          : JuhColors.textMuted,
-                      size: 18,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 10),
-              Text(
-                widget.title,
-                textAlign: widget.isAr ? TextAlign.right : TextAlign.left,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  fontSize: JuhSizes.fontSm,
-                  fontWeight: FontWeight.w700,
-                  color: _pressed
-                      ? JuhColors.primaryInk
-                      : JuhColors.textPrimary,
                 ),
               ),
-              Text(
-                widget.subtitle,
-                textAlign: widget.isAr ? TextAlign.right : TextAlign.left,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  fontSize: JuhSizes.fontXs,
-                  color: _pressed
-                      ? JuhColors.primaryInk.withValues(alpha: 0.7)
-                      : JuhColors.textSecondary,
+              Container(
+                padding: const EdgeInsets.all(14),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(JuhSizes.radiusLg),
+                ),
+                child: const Icon(
+                  Icons.medical_services_rounded,
+                  color: Colors.white,
+                  size: 30,
                 ),
               ),
             ],
           ),
+        ),
+    );
+  }
+}
+
+// ───────────────────────────── Service card (small) ────────────────────────
+
+class _ServiceCard extends StatelessWidget {
+  final bool isAr;
+  final IconData icon;
+  final Color iconColor;
+  final Color cardBg;
+  final String title;
+  final String subtitle;
+  final VoidCallback onTap;
+  const _ServiceCard({
+    required this.isAr,
+    required this.icon,
+    required this.iconColor,
+    required this.cardBg,
+    required this.title,
+    required this.subtitle,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return _Pressable(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(JuhSizes.radiusXl),
+      child: Container(
+        padding: const EdgeInsets.all(JuhSizes.md),
+        decoration: BoxDecoration(
+          color: cardBg,
+          borderRadius: BorderRadius.circular(JuhSizes.radiusXl),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.06),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              textDirection: isAr ? TextDirection.rtl : TextDirection.ltr,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.8),
+                    borderRadius: BorderRadius.circular(JuhSizes.radiusSm),
+                  ),
+                  child: Icon(icon, color: iconColor, size: 20),
+                ),
+                Icon(
+                  Icons.arrow_outward_rounded,
+                  color: iconColor.withValues(alpha: 0.7),
+                  size: 16,
+                ),
+              ],
+            ),
+            const SizedBox(height: JuhSizes.sm),
+            Text(
+              title,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              textAlign: isAr ? TextAlign.right : TextAlign.left,
+              style: TextStyle(
+                fontSize: JuhSizes.fontSm,
+                fontWeight: FontWeight.w700,
+                color: context.juhText,
+              ),
+            ),
+            const SizedBox(height: 2),
+            Text(
+              subtitle,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              textAlign: isAr ? TextAlign.right : TextAlign.left,
+              style: TextStyle(
+                fontSize: JuhSizes.fontXs,
+                color: context.juhTextSub,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ───────────────────────────── Service card (wide) ─────────────────────────
+
+class _ServiceCardWide extends StatelessWidget {
+  final bool isAr;
+  final IconData icon;
+  final Color iconColor;
+  final Color cardBg;
+  final String title;
+  final String subtitle;
+  final VoidCallback onTap;
+  const _ServiceCardWide({
+    required this.isAr,
+    required this.icon,
+    required this.iconColor,
+    required this.cardBg,
+    required this.title,
+    required this.subtitle,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return _Pressable(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(JuhSizes.radiusXl),
+      child: Container(
+        padding: const EdgeInsets.all(JuhSizes.md),
+        decoration: BoxDecoration(
+          color: cardBg,
+          borderRadius: BorderRadius.circular(JuhSizes.radiusXl),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.06),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Row(
+          textDirection: isAr ? TextDirection.rtl : TextDirection.ltr,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.8),
+                borderRadius: BorderRadius.circular(JuhSizes.radiusSm),
+              ),
+              child: Icon(icon, color: iconColor, size: 22),
+            ),
+            const SizedBox(width: JuhSizes.sm),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    textAlign: isAr ? TextAlign.right : TextAlign.left,
+                    style: TextStyle(
+                      fontSize: JuhSizes.fontSm,
+                      fontWeight: FontWeight.w700,
+                      color: context.juhText,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    subtitle,
+                    textAlign: isAr ? TextAlign.right : TextAlign.left,
+                    style: TextStyle(
+                      fontSize: JuhSizes.fontXs,
+                      color: context.juhTextSub,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Icon(
+              Icons.arrow_outward_rounded,
+              color: iconColor.withValues(alpha: 0.7),
+              size: 16,
+            ),
+          ],
         ),
       ),
     );
@@ -887,11 +1078,13 @@ class _BookingOptionTile extends StatelessWidget {
   final String subtitle;
   final IconData icon;
   final VoidCallback onTap;
+  final bool isAr;
   const _BookingOptionTile({
     required this.title,
     required this.subtitle,
     required this.icon,
     required this.onTap,
+    required this.isAr,
   });
 
   @override
@@ -902,16 +1095,17 @@ class _BookingOptionTile extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(JuhSizes.md),
         decoration: BoxDecoration(
-          color: JuhColors.bg,
+          color: context.juhBg,
           borderRadius: BorderRadius.circular(JuhSizes.radiusLg),
-          border: Border.all(color: JuhColors.border),
+          border: Border.all(color: context.juhBorder),
         ),
         child: Row(
+          textDirection: isAr ? TextDirection.rtl : TextDirection.ltr,
           children: [
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: JuhColors.primarySoft,
+                color: context.juhPrimarySoft,
                 borderRadius: BorderRadius.circular(JuhSizes.radiusSm),
               ),
               child: Icon(icon, color: JuhColors.primary, size: JuhSizes.iconMd),
@@ -923,25 +1117,28 @@ class _BookingOptionTile extends StatelessWidget {
                 children: [
                   Text(
                     title,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: JuhSizes.fontSm,
                       fontWeight: FontWeight.w700,
-                      color: JuhColors.textPrimary,
+                      color: context.juhText,
                     ),
                   ),
                   const SizedBox(height: 2),
                   Text(
                     subtitle,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: JuhSizes.fontXs,
-                      color: JuhColors.textSecondary,
+                      color: context.juhTextSub,
                     ),
                   ),
                 ],
               ),
             ),
-            const Icon(Icons.chevron_right,
-                color: JuhColors.textMuted, size: JuhSizes.iconMd),
+            Icon(
+              isAr ? Icons.chevron_left : Icons.chevron_right,
+              color: context.juhTextMuted,
+              size: JuhSizes.iconMd,
+            ),
           ],
         ),
       ),
@@ -978,7 +1175,7 @@ class _AppDrawer extends ConsumerWidget {
     }
 
     return Drawer(
-      backgroundColor: JuhColors.surface,
+      backgroundColor: context.juhSurface,
       child: SafeArea(
         child: Column(
           children: [
@@ -1088,12 +1285,14 @@ class _AppDrawer extends ConsumerWidget {
                     padding: const EdgeInsets.symmetric(
                         horizontal: 12, vertical: 2),
                     child: Row(
+                      textDirection:
+                          isAr ? TextDirection.rtl : TextDirection.ltr,
                       children: [
                         Container(
                           width: 40,
                           height: 40,
                           decoration: BoxDecoration(
-                            color: JuhColors.primarySoft,
+                            color: context.juhPrimarySoft,
                             borderRadius:
                                 BorderRadius.circular(JuhSizes.radiusMd),
                           ),
@@ -1104,10 +1303,10 @@ class _AppDrawer extends ConsumerWidget {
                         Expanded(
                           child: Text(
                             isAr ? 'اللغة' : 'Language',
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: JuhSizes.fontSm,
                               fontWeight: FontWeight.w600,
-                              color: JuhColors.textPrimary,
+                              color: context.juhText,
                             ),
                           ),
                         ),
@@ -1121,12 +1320,14 @@ class _AppDrawer extends ConsumerWidget {
                     padding: const EdgeInsets.symmetric(
                         horizontal: 12, vertical: 2),
                     child: Row(
+                      textDirection:
+                          isAr ? TextDirection.rtl : TextDirection.ltr,
                       children: [
                         Container(
                           width: 40,
                           height: 40,
                           decoration: BoxDecoration(
-                            color: JuhColors.primarySoft,
+                            color: context.juhPrimarySoft,
                             borderRadius:
                                 BorderRadius.circular(JuhSizes.radiusMd),
                           ),
@@ -1142,10 +1343,10 @@ class _AppDrawer extends ConsumerWidget {
                         Expanded(
                           child: Text(
                             isAr ? 'الوضع الليلي' : 'Dark Mode',
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: JuhSizes.fontSm,
                               fontWeight: FontWeight.w600,
-                              color: JuhColors.textPrimary,
+                              color: context.juhText,
                             ),
                           ),
                         ),
@@ -1173,7 +1374,19 @@ class _AppDrawer extends ConsumerWidget {
               labelColor: JuhColors.error,
               onTap: () async {
                 Navigator.pop(context);
-                await nhostClient.auth.signOut();
+                try {
+                  await nhostClient.auth
+                      .signOut()
+                      .timeout(const Duration(seconds: 6));
+                } catch (_) {
+                  // Network error or timeout — clear the local session directly
+                  // so GoRouter redirect fires even without a server response.
+                  // ignore: invalid_use_of_visible_for_testing_member
+                  await nhostClient.auth.clearSession();
+                }
+                // GoRouter's authListenable handles the redirect automatically;
+                // context.go is a safety-net for cases where the drawer context
+                // is still mounted (it typically isn't after Navigator.pop).
                 if (context.mounted) context.go('/welcome');
               },
             ),
@@ -1190,18 +1403,19 @@ class _DrawerItem extends StatelessWidget {
   final String label;
   final VoidCallback onTap;
   final Color iconColor;
-  final Color labelColor;
+  final Color? labelColor;
 
   const _DrawerItem({
     required this.icon,
     required this.label,
     required this.onTap,
     this.iconColor = JuhColors.primary,
-    this.labelColor = JuhColors.textPrimary,
+    this.labelColor,
   });
 
   @override
   Widget build(BuildContext context) {
+    final isRtl = Directionality.of(context) == TextDirection.rtl;
     return ListTile(
       contentPadding:
           const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
@@ -1219,12 +1433,12 @@ class _DrawerItem extends StatelessWidget {
         style: TextStyle(
           fontSize: JuhSizes.fontSm,
           fontWeight: FontWeight.w600,
-          color: labelColor,
+          color: labelColor ?? context.juhText,
         ),
       ),
-      trailing: const Icon(
-        Icons.chevron_right_rounded,
-        color: JuhColors.textMuted,
+      trailing: Icon(
+        isRtl ? Icons.chevron_left_rounded : Icons.chevron_right_rounded,
+        color: context.juhTextMuted,
         size: 18,
       ),
       onTap: onTap,
@@ -1249,9 +1463,9 @@ class _SpecialtyPill extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
       decoration: BoxDecoration(
-        color: JuhColors.surface,
+        color: context.juhSurface,
         borderRadius: BorderRadius.circular(JuhSizes.radiusFull),
-        border: Border.all(color: JuhColors.border),
+        border: Border.all(color: context.juhBorder),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.05),
@@ -1268,10 +1482,10 @@ class _SpecialtyPill extends StatelessWidget {
           const SizedBox(width: 6),
           Text(
             label,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: JuhSizes.fontXs,
               fontWeight: FontWeight.w700,
-              color: JuhColors.textPrimary,
+              color: context.juhText,
             ),
           ),
         ],

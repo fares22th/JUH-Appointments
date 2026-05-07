@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../core/colors.dart';
+import '../../core/extensions.dart';
 import '../../core/sizes.dart';
 import '../../models/appointment.dart';
 
@@ -14,22 +15,22 @@ class StatusChip extends StatelessWidget {
     final (label, bg, fg) = switch (status) {
       ApptStatus.confirmed => (
           isAr ? 'مؤكد' : 'Confirmed',
-          JuhColors.successSoft,
+          context.juhSuccessSoft,
           JuhColors.statusConfirmed,
         ),
       ApptStatus.cancelled => (
           isAr ? 'ملغى' : 'Cancelled',
-          JuhColors.errorSoft,
+          context.juhErrorSoft,
           JuhColors.statusCancelled,
         ),
       ApptStatus.pending => (
           isAr ? 'بانتظار التأكيد' : 'Pending',
-          JuhColors.warningSoft,
+          context.juhWarningSoft,
           JuhColors.statusPending,
         ),
       ApptStatus.completed => (
           isAr ? 'مكتمل' : 'Completed',
-          JuhColors.primarySoft,
+          context.juhPrimarySoft,
           JuhColors.primary,
         ),
     };

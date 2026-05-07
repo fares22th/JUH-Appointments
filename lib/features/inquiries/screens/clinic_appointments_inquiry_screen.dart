@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/colors.dart';
+import '../../../core/extensions.dart';
 import '../../../core/sizes.dart';
 import '../../../data/seed_data.dart';
 import '../../../models/doctor.dart';
@@ -477,7 +478,7 @@ class _AvailabilityBadge extends StatelessWidget {
   Widget build(BuildContext context) => Container(
         padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
         decoration: BoxDecoration(
-          color: available ? JuhColors.successSoft : JuhColors.errorSoft,
+          color: available ? context.juhSuccessSoft : context.juhErrorSoft,
           borderRadius: BorderRadius.circular(JuhSizes.radiusFull),
         ),
         child: Row(

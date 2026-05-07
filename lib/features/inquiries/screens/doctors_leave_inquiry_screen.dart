@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/colors.dart';
+import '../../../core/extensions.dart';
 import '../../../core/sizes.dart';
 import '../../../shared/widgets/screen_header.dart';
 
@@ -390,36 +391,39 @@ class _LeaveCard extends StatelessWidget {
   final _LeaveRow row;
   const _LeaveCard({required this.row});
 
-  static const Map<_LeaveStatus, ({Color bg, Color fg, Color border, String label, IconData icon})>
-      _statusStyle = {
-    _LeaveStatus.active: (
-      bg: Color(0xFFFFEBEE),
-      fg: Color(0xFFC62828),
-      border: Color(0xFFEF9A9A),
-      label: 'جارية',
-      icon: Icons.event_busy,
-    ),
-    _LeaveStatus.upcoming: (
-      bg: Color(0xFFFFF8E1),
-      fg: Color(0xFFF57F17),
-      border: Color(0xFFFFE082),
-      label: 'قادمة',
-      icon: Icons.schedule,
-    ),
-    _LeaveStatus.expired: (
-      bg: Color(0xFFF5F5F5),
-      fg: Color(0xFF757575),
-      border: Color(0xFFE0E0E0),
-      label: 'منتهية',
-      icon: Icons.check_circle_outline,
-    ),
-  };
+  static ({Color bg, Color fg, Color border, String label, IconData icon})
+      _style(_LeaveStatus s, BuildContext ctx) {
+    final isDark = ctx.isDark;
+    return switch (s) {
+      _LeaveStatus.active => (
+          bg: ctx.juhErrorSoft,
+          fg: JuhColors.error,
+          border: JuhColors.error.withValues(alpha: 0.35),
+          label: 'جارية',
+          icon: Icons.event_busy,
+        ),
+      _LeaveStatus.upcoming => (
+          bg: ctx.juhWarningSoft,
+          fg: JuhColors.warning,
+          border: JuhColors.warning.withValues(alpha: 0.35),
+          label: 'قادمة',
+          icon: Icons.schedule,
+        ),
+      _LeaveStatus.expired => (
+          bg: isDark ? const Color(0xFF1A2A32) : const Color(0xFFF5F5F5),
+          fg: isDark ? const Color(0xFF8AADB8) : const Color(0xFF757575),
+          border: isDark ? const Color(0xFF1A3A4A) : const Color(0xFFE0E0E0),
+          label: 'منتهية',
+          icon: Icons.check_circle_outline,
+        ),
+    };
+  }
 
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     final status = _leaveStatus(row.fromDate, row.toDate);
-    final style = _statusStyle[status]!;
+    final style = _style(status, context);
     final parsed = _splitName(row.rawName);
     final days = _leaveDays(row.fromDate, row.toDate);
 

@@ -292,9 +292,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                             const SizedBox(width: JuhSizes.sm),
                             Expanded(
                               child: Column(
-                                crossAxisAlignment: isAr
-                                    ? CrossAxisAlignment.end
-                                    : CrossAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
                                     isAr ? r.nameAr : r.nameEn,
@@ -407,9 +405,7 @@ class _ContactCard extends StatelessWidget {
                     const SizedBox(width: JuhSizes.md),
                     Expanded(
                       child: Column(
-                        crossAxisAlignment: isAr
-                            ? CrossAxisAlignment.end
-                            : CrossAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
                             row.$2,

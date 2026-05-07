@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart' hide TextDirection;
 
 import '../../../core/colors.dart';
+import '../../../core/extensions.dart';
 import '../../../core/sizes.dart';
 import '../../../data/seed_data.dart';
 import '../../../providers/booking_provider.dart';
@@ -72,7 +73,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
         : ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
 
     return Scaffold(
-      backgroundColor: JuhColors.bg,
+      backgroundColor: context.juhBg,
       appBar: const ScreenHeader(
         titleAr: 'اختر الموعد',
         titleEn: 'Choose Appointment',
@@ -89,10 +90,10 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                   JuhSizes.md,
                   JuhSizes.md,
                 ),
-                decoration: const BoxDecoration(
-                  color: JuhColors.bg,
+                decoration: BoxDecoration(
+                  color: context.juhBg,
                   border: Border(
-                    top: BorderSide(color: JuhColors.border),
+                    top: BorderSide(color: context.juhBorder),
                   ),
                 ),
                 child: AppButton(
@@ -106,7 +107,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                         );
                     context.push('/confirm?who=${widget.who}');
                   },
-                  icon: Icons.arrow_forward,
+                  icon: isAr ? Icons.arrow_back : Icons.arrow_forward,
                 ),
               ),
             )
@@ -131,9 +132,9 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                   child: Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: context.juhSurface,
                       borderRadius: BorderRadius.circular(JuhSizes.radiusLg),
-                      border: Border.all(color: JuhColors.border),
+                      border: Border.all(color: context.juhBorder),
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black.withValues(alpha: 0.04),
@@ -147,7 +148,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                           isAr ? TextDirection.rtl : TextDirection.ltr,
                       children: [
                         CircleAvatar(
-                          backgroundColor: JuhColors.primarySoft,
+                          backgroundColor: context.juhPrimarySoft,
                           radius: 21,
                           child: Text(
                             (isAr ? doctor.nameAr : doctor.nameEn)
@@ -163,18 +164,16 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                         const SizedBox(width: 12),
                         Expanded(
                           child: Column(
-                            crossAxisAlignment: isAr
-                                ? CrossAxisAlignment.end
-                                : CrossAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
                                 isAr ? doctor.nameAr : doctor.nameEn,
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: JuhSizes.fontBase,
                                   fontWeight: FontWeight.w700,
-                                  color: JuhColors.textPrimary,
+                                  color: context.juhText,
                                 ),
                               ),
                               const SizedBox(height: 2),
@@ -182,9 +181,9 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                                 isAr ? doctor.titleAr : doctor.titleEn,
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: JuhSizes.fontXs,
-                                  color: JuhColors.textSecondary,
+                                  color: context.juhTextSub,
                                 ),
                               ),
                             ],
@@ -218,9 +217,9 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                 child: Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: context.juhSurface,
                     borderRadius: BorderRadius.circular(JuhSizes.radiusLg),
-                    border: Border.all(color: JuhColors.border),
+                    border: Border.all(color: context.juhBorder),
                   ),
                   child: Column(
                     children: [
@@ -233,19 +232,21 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                             icon:
                                 isAr ? Icons.chevron_right : Icons.chevron_left,
                             onTap: _prevMonth,
+                            context: context,
                           ),
                           Text(
                             monthName,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: JuhSizes.fontBase,
                               fontWeight: FontWeight.w800,
-                              color: JuhColors.textPrimary,
+                              color: context.juhText,
                             ),
                           ),
                           _monthButton(
                             icon:
                                 isAr ? Icons.chevron_left : Icons.chevron_right,
                             onTap: _nextMonth,
+                            context: context,
                           ),
                         ],
                       ),
@@ -257,10 +258,10 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                                 child: Center(
                                   child: Text(
                                     d,
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       fontSize: JuhSizes.fontXs,
                                       fontWeight: FontWeight.w700,
-                                      color: JuhColors.textSecondary,
+                                      color: context.juhTextSub,
                                     ),
                                   ),
                                 ),
@@ -330,7 +331,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                                     color: isSelected
                                         ? JuhColors.primary
                                         : isToday
-                                            ? JuhColors.primarySoft
+                                            ? context.juhPrimarySoft
                                             : Colors.transparent,
                                     borderRadius: BorderRadius.circular(10),
                                     border: Border.all(
@@ -351,12 +352,12 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                                             ? FontWeight.w800
                                             : FontWeight.w500,
                                         color: isDisabled
-                                            ? JuhColors.border
+                                            ? context.juhBorder
                                             : isSelected
                                                 ? Colors.white
                                                 : isToday
                                                     ? JuhColors.primary
-                                                    : JuhColors.textPrimary,
+                                                    : context.juhText,
                                       ),
                                     ),
                                   ),
@@ -386,10 +387,10 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                 child: Text(
                   isAr ? 'المواعيد المتاحة' : 'Available Slots',
                   textAlign: isAr ? TextAlign.right : TextAlign.left,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: JuhSizes.fontSm,
                     fontWeight: FontWeight.w700,
-                    color: JuhColors.textSecondary,
+                    color: context.juhTextSub,
                   ),
                 ),
               ),
@@ -404,16 +405,15 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                       vertical: 22,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: context.juhSurface,
                       borderRadius: BorderRadius.circular(JuhSizes.radiusLg),
-                      border: Border.all(color: JuhColors.border),
+                      border: Border.all(color: context.juhBorder),
                     ),
                     child: Column(
                       children: [
                         Icon(
                           Icons.calendar_month_outlined,
-                          color:
-                              JuhColors.textSecondary.withValues(alpha: 0.75),
+                          color: context.juhTextSub.withValues(alpha: 0.75),
                           size: 32,
                         ),
                         const SizedBox(height: 8),
@@ -422,8 +422,8 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                               ? 'اختر يوماً من التقويم لعرض المواعيد'
                               : 'Select a day from the calendar to show slots',
                           textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            color: JuhColors.textSecondary,
+                          style: TextStyle(
+                            color: context.juhTextSub,
                             fontSize: JuhSizes.fontSm,
                           ),
                         ),
@@ -464,14 +464,14 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                           padding: const EdgeInsets.symmetric(horizontal: 8),
                           decoration: BoxDecoration(
                             color: booked
-                                ? Colors.white
+                                ? context.juhSurface
                                 : isSlotSelected
                                     ? JuhColors.primary
-                                    : Colors.white,
+                                    : context.juhSurface,
                             borderRadius: BorderRadius.circular(14),
                             border: Border.all(
                               color: booked
-                                  ? JuhColors.border
+                                  ? context.juhBorder
                                   : isSlotSelected
                                       ? JuhColors.primary
                                       : JuhColors.primary
@@ -493,7 +493,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                                 Icons.access_time_rounded,
                                 size: 15,
                                 color: booked
-                                    ? JuhColors.border
+                                    ? context.juhBorder
                                     : isSlotSelected
                                         ? Colors.white
                                         : JuhColors.primary,
@@ -508,14 +508,14 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                                     fontSize: JuhSizes.fontSm,
                                     fontWeight: FontWeight.w700,
                                     color: booked
-                                        ? JuhColors.border
+                                        ? context.juhBorder
                                         : isSlotSelected
                                             ? Colors.white
                                             : JuhColors.primary,
                                     decoration: booked
                                         ? TextDecoration.lineThrough
                                         : TextDecoration.none,
-                                    decorationColor: JuhColors.border,
+                                    decorationColor: context.juhBorder,
                                   ),
                                 ),
                               ),
@@ -536,6 +536,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
   Widget _monthButton({
     required IconData icon,
     required VoidCallback onTap,
+    required BuildContext context,
   }) {
     return InkWell(
       onTap: onTap,
@@ -544,7 +545,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
         width: 36,
         height: 36,
         decoration: BoxDecoration(
-          color: JuhColors.primarySoft,
+          color: context.juhPrimarySoft,
           borderRadius: BorderRadius.circular(18),
         ),
         child: Icon(
